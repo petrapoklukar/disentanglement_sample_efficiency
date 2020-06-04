@@ -28,7 +28,7 @@ def tf_data_set_from_ground_truth_data(ground_truth_data, random_seed):
   def generator():
     # We need to hard code the random seed so that the data set can be reset.
     random_state = np.random.RandomState(random_seed)
-    while True:
+    while True:      
       yield ground_truth_data.sample_observations(1, random_state)[0]
 
   return tf.data.Dataset.from_generator(

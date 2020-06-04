@@ -23,6 +23,7 @@ from disentanglement_lib.data.ground_truth import dummy_data
 from disentanglement_lib.data.ground_truth import mpi3d
 from disentanglement_lib.data.ground_truth import norb
 from disentanglement_lib.data.ground_truth import shapes3d
+from disentanglement_lib.data.ground_truth import shapes3d_partial
 import gin.tf
 
 
@@ -36,7 +37,6 @@ def get_named_ground_truth_data(name):
   Raises:
     ValueError: if an invalid data set name is provided.
   """
-
   if name == "dsprites_full":
     return dsprites.DSprites([1, 2, 3, 4, 5])
   elif name == "dsprites_noshape":
@@ -57,8 +57,10 @@ def get_named_ground_truth_data(name):
     return mpi3d.MPI3D(mode="mpi3d_realistic")
   elif name == "mpi3d_real":
     return mpi3d.MPI3D(mode="mpi3d_real")
-  elif name == "shapes3d":
+  elif name == "3dshapes":
     return shapes3d.Shapes3D()
+  elif name[:8] == "3dshapes":
+    return shapes3d_partial.Shapes3DPartial(name+'_train'), shapes3d_partial.Shapes3DPartial(name+'_valid')
   elif name == "dummy_data":
     return dummy_data.DummyData()
   else:

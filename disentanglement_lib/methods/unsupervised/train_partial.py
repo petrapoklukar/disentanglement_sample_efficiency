@@ -97,7 +97,7 @@ def train(model_dir,
   random_state = np.random.RandomState(random_seed)
 
   # Obtain the dataset.
-  dataset = named_data.get_named_ground_truth_data()
+  dataset_train, dataset_vali = named_data.get_named_ground_truth_data()
 
   # We create a TPUEstimator based on the provided model. This is primarily so
   # that we could switch to TPU training in the future. For now, we train
@@ -119,11 +119,11 @@ def train(model_dir,
 
   # Do the actual training.
   tpu_estimator.train(
-      input_fn=_make_input_fn(dataset, random_state.randint(2**32)),
+      input_fn=_make_input_fn(dataset_train, random_state.randint(2**32)),
       steps=training_steps)
 
   # Save model as a TFHub module.
-  output_shape = named_data.get_named_ground_truth_data().observation_shape
+  output_shape = named_data.get_named_ground_truth_data()[0].observation_shape
   module_export_path = os.path.join(model_dir, "tfhub")
   gaussian_encoder_model.export_as_tf_hub(model, output_shape,
                                           tpu_estimator.latest_checkpoint(),
@@ -134,7 +134,7 @@ def train(model_dir,
   # these files will be available for analysis at the end.
   results_dict = tpu_estimator.evaluate(
       input_fn=_make_input_fn(
-          dataset, random_state.randint(2**32), num_batches=eval_steps))
+          dataset_vali, random_state.randint(2**32), num_batches=eval_steps))
   results_dir = os.path.join(model_dir, "results")
   results_dict["elapsed_time"] = time.time() - experiment_timer
   results.update_result_directory(results_dir, "train", results_dict)
