@@ -169,7 +169,7 @@ def create_dataset(indices, savename, images, labels):
     hf.close()
     
 
-def write_datasets(indices_list, savename_list, images, labels):
+def write_datasets(indices_list, savename_list, images, labels, indices):
     """ Creates a partial 3dshapes datasets from the given set of indices.
     Args:
         indices: list of indices in the original 3dshapes datasets
@@ -179,13 +179,15 @@ def write_datasets(indices_list, savename_list, images, labels):
     ims = np.array(images)
     print('Creating np arrays...')
     labs = np.array(labels)
+    print('Creating np arrays...')
+    inds = np.array(indices)
     
     print('Writing files')
-    for indices, savename in list(zip(indices_list, savename_list)):
+    for ind, savename in list(zip(indices_list, savename_list)):
         hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
         hf.create_dataset('images', data=ims[indices])
         hf.create_dataset('labels', data=labs[indices])
-        hf.create_dataset('indices', data=indices)
+        hf.create_dataset('indices', data=inds[indices])
         hf.close()
 
 
@@ -213,17 +215,9 @@ def create_top_datasets():
     top_split_indices = create_top_splits()
     top_split_names = ['3dshapes_model_all', '3dshapes_task', '3dshapes_holdout']
     write_datasets(top_split_indices, top_split_names, images, labels)
-    
-#    model_indices, task_indices, holdout_indices = create_top_splits()
-#    print('Creating model split')
-#    create_dataset(model_indices, '3dshapes_model_all', images, labels)
-#    print('Creating task split')
-#    create_dataset(task_indices, '3dshapes_task', images, labels)
-#    print('Creating holdout split')
-#    create_dataset(holdout_indices, '3dshapes_holdout', images, labels)
-    
 
-def create_model_splits(filename, savename):
+
+def create_model_splits(filename):
     """ Randomly splits the model split into smaller datasets of different
         sizes.
     
@@ -234,8 +228,11 @@ def create_model_splits(filename, savename):
     print(dataset_split.keys())
     images_split = dataset_split['images'] 
     labels_split = dataset_split['labels'] 
+    indices_split = dataset_split['indices']
+    
+    print(len(images_split))
     np.random.seed(2610)
-    all_indices = np.arange(len(images))
+    all_indices = np.arange(len(indices_split))
     split_sizes = [10000, 50000, 100000, 150000, 250000]
     
     split_indices = []
@@ -248,15 +245,17 @@ def create_model_splits(filename, savename):
                           split_indices[num_splits]).size == split_sizes[0] \
             for num_splits in range(len(split_size)))
     
+    savename_list = []
     for split_size in range(len(split_sizes)): 
-        savename = '3dshapes_model_s{0}'.format(split_sizes[split_size])
-        create_dataset(split_indices[split_size], savename, 
-                       images_split, labels_split)       
+        savename_list.append('3dshapes_model_s{0}'.format(split_sizes[split_size]))
+        
+    write_datasets(split_indices, savename_list, images_split, labels_split, indices_split)
     dataset_split.close()
 
 
 if __name__ == '__main__':
-    create_top_datasets()
+#    create_top_datasets()
+    create_model_splits('3dshapes_model_all')
 
 #img_batch = sample_batch(batch_size, 5, 15)
 #show_images_grid(img_batch, num_images=16)
