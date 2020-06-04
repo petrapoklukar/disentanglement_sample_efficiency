@@ -152,13 +152,14 @@ def create_dataset(indices, savename, images, labels):
     ims, labs = [], []
     counter = 0
     dataset_len = len(indices) 
+    
     for ind in indices:
         image = np.asarray(images[ind])
         ims.append(image)
         label = np.asarray(labels[ind])
         labs.append(label)
         counter += 1 
-        if counter % 10000 == 0:
+        if counter % 1000 == 0:
             print('Processed {0}/{1}'.format(counter, dataset_len))
         
     hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
@@ -190,8 +191,11 @@ def create_top_datasets():
         are disjoint.
     """
     model_indices, task_indices, holdout_indices = create_top_splits()
+    print('Creating model split')
     create_dataset(model_indices, '3dshapes_model_all', images, labels)
+    print('Creating task split')
     create_dataset(task_indices, '3dshapes_task', images, labels)
+    print('Creating holdout split')
     create_dataset(holdout_indices, '3dshapes_holdout', images, labels)
     
 
@@ -227,7 +231,8 @@ def create_model_splits(filename, savename):
     dataset_split.close()
 
 
-
+if __name__ == '__main__':
+    create_top_datasets()
 
 #img_batch = sample_batch(batch_size, 5, 15)
 #show_images_grid(img_batch, num_images=16)
