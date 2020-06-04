@@ -243,7 +243,7 @@ def create_model_splits(filename):
     
     assert(np.intersect1d(split_indices[0], 
                           split_indices[num_splits]).size == split_sizes[0] \
-            for num_splits in range(len(split_size)))
+            for num_splits in range(len(split_sizes)))
     
     savename_list = []
     for split_size in range(len(split_sizes)): 
