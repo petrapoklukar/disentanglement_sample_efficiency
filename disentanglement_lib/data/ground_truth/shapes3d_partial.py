@@ -26,13 +26,11 @@ import tensorflow as tf
 import h5py
 
 
-SHAPES3D_PATH = os.path.join(
-    os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", "3dshapes.h5"
-)
 
 
 
-class Shapes3D(ground_truth_data.GroundTruthData):
+
+class Shapes3DPartial(ground_truth_data.GroundTruthData):
   """Shapes3D dataset.
 
   The data set was originally introduced in "Disentangling by Factorising".
@@ -46,11 +44,16 @@ class Shapes3D(ground_truth_data.GroundTruthData):
   5 - azimuth (15 different values)
   """
 
-  def __init__(self):
+  def __init__(self,name):
+    SHAPES3D_PATH = os.path.join(
+    os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", name+".h5"
+    )
+
     with h5py.File(SHAPES3D_PATH, 'r') as dataset:
       images = dataset['images'][()]
       labels = dataset['labels'][()]
-    n_samples = images.shape[0]
+      n_samples = images.shape[0]
+      self.data_size=n_samples
     self.images = (
         images.reshape([n_samples, 64, 64, 3]).astype(np.float32) / 255.)
     features = labels.reshape([n_samples, 6])
@@ -61,6 +64,7 @@ class Shapes3D(ground_truth_data.GroundTruthData):
                                                     self.latent_factor_indices)
     self.factor_bases = np.prod(self.factor_sizes) / np.cumprod(
         self.factor_sizes)
+
 
   @property
   def num_factors(self):
@@ -74,11 +78,23 @@ class Shapes3D(ground_truth_data.GroundTruthData):
   def observation_shape(self):
     return [64, 64, 3]
 
+  def get_data_size(self):
+    return self.data_size
+
   def sample_factors(self, num, random_state):
     """Sample a batch of factors Y."""
     return self.state_space.sample_latent_factors(num, random_state)
 
   def sample_observations_from_factors(self, factors, random_state):
-    all_factors = self.state_space.sample_all_factors(factors, random_state)
-    indices = np.array(np.dot(all_factors, self.factor_bases), dtype=np.int64)
-    return self.images[indices]
+    if self.data_size <400000:
+      imgs=self.observations_from_indices(random_state)
+      return [imgs]
+    else:
+      all_factors = self.state_space.sample_all_factors(factors, random_state)
+      indices = np.array(np.dot(all_factors, self.factor_bases), dtype=np.int64)
+      #random.randint(0:self.data_size-1)
+      return self.images[indices]
+
+  def observations_from_indices(self,random_state):
+    return self.images[random_state.randint(0,self.data_size-1)]
+
