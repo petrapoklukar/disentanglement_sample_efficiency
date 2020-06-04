@@ -167,6 +167,26 @@ def create_dataset(indices, savename, images, labels):
     hf.create_dataset('labels', data=labs)
     hf.create_dataset('indices', data=indices)
     hf.close()
+    
+
+def write_datasets(indices_list, savename_list, images, labels):
+    """ Creates a partial 3dshapes datasets from the given set of indices.
+    Args:
+        indices: list of indices in the original 3dshapes datasets
+        name: name of the file to save the samples
+    """
+    print('Creating np arrays...')
+    ims = np.array(images)
+    print('Creating np arrays...')
+    labs = np.array(labels)
+    
+    print('Writing files')
+    for indices, savename in list(zip(indices_list, savename_list)):
+        hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
+        hf.create_dataset('images', data=ims[indices])
+        hf.create_dataset('labels', data=labs[indices])
+        hf.create_dataset('indices', data=indices)
+        hf.close()
 
 
 def plot_label_distribution(indices, max_ind=10000):
@@ -190,13 +210,17 @@ def create_top_datasets():
     """ Creates random model split, task split and holdout splits. The splits
         are disjoint.
     """
-    model_indices, task_indices, holdout_indices = create_top_splits()
-    print('Creating model split')
-    create_dataset(model_indices, '3dshapes_model_all', images, labels)
-    print('Creating task split')
-    create_dataset(task_indices, '3dshapes_task', images, labels)
-    print('Creating holdout split')
-    create_dataset(holdout_indices, '3dshapes_holdout', images, labels)
+    top_split_indices = create_top_splits()
+    top_split_names = ['3dshapes_model_all', '3dshapes_task', '3dshapes_holdout']
+    write_datasets(top_split_indices, top_split_names, images, labels)
+    
+#    model_indices, task_indices, holdout_indices = create_top_splits()
+#    print('Creating model split')
+#    create_dataset(model_indices, '3dshapes_model_all', images, labels)
+#    print('Creating task split')
+#    create_dataset(task_indices, '3dshapes_task', images, labels)
+#    print('Creating holdout split')
+#    create_dataset(holdout_indices, '3dshapes_holdout', images, labels)
     
 
 def create_model_splits(filename, savename):
