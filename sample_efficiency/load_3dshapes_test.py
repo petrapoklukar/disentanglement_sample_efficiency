@@ -183,7 +183,7 @@ def write_datasets(indices_list, savename_list, images, labels, indices):
     inds = np.array(indices)
     
     print('Writing files')
-    for ind, savename in list(zip(indices_list, savename_list)):
+    for indices, savename in list(zip(indices_list, savename_list)):
         hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
         hf.create_dataset('images', data=ims[indices])
         hf.create_dataset('labels', data=labs[indices])
