@@ -142,32 +142,7 @@ def create_top_splits():
     assert(not np.intersect1d(task_indices, holdout_indices).size > 0)
     return model_indices, task_indices, holdout_indices
     
-    
-def create_dataset(indices, savename, images, labels):
-    """ Creates a partial 3dshapes datasets from the given set of indices.
-    Args:
-        indices: list of indices in the original 3dshapes datasets
-        name: name of the file to save the samples
-    """
-    ims, labs = [], []
-    counter = 0
-    dataset_len = len(indices) 
-    
-    for ind in indices:
-        image = np.asarray(images[ind])
-        ims.append(image)
-        label = np.asarray(labels[ind])
-        labs.append(label)
-        counter += 1 
-        if counter % 1000 == 0:
-            print('Processed {0}/{1}'.format(counter, dataset_len))
         
-    hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
-    hf.create_dataset('images', data=ims)
-    hf.create_dataset('labels', data=labs)
-    hf.create_dataset('indices', data=indices)
-    hf.close()
-    
 
 def write_datasets(indices_list, savename_list, images, labels, indices):
     """ Creates a partial 3dshapes datasets from the given set of indices.
@@ -255,15 +230,5 @@ def create_model_splits(filename):
 
 if __name__ == '__main__':
 #    create_top_datasets()
-    create_model_splits('3dshapes_model_all')
-
-#img_batch = sample_batch(batch_size, 5, 15)
-#show_images_grid(img_batch, num_images=16)
-
-#hf = h5py.File('datasets/3dshapes_test.h5', 'w')
-#hf.create_dataset('images', data=random_batch[0])
-#hf.create_dataset('labels', data=random_batch[1])
-#hf.close()
-#
-#dataset_test = h5py.File('datasets/3dshapes_test.h5', 'r')
-#dataset_test.close()
+#    create_model_splits('3dshapes_model_all')
+    pass
