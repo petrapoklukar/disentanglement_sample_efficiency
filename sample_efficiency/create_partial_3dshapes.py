@@ -9,6 +9,7 @@ Created on Thu Jun  4 11:46:32 2020
 from matplotlib import pyplot as plt
 import numpy as np
 import h5py
+import gin.tf
 
 # load dataset
 dataset = h5py.File('datasets/3dshapes.h5', 'r')
@@ -141,8 +142,7 @@ def create_top_splits():
     assert(not np.intersect1d(model_indices, task_indices).size > 0)
     assert(not np.intersect1d(task_indices, holdout_indices).size > 0)
     return model_indices, task_indices, holdout_indices
-    
-        
+      
 
 def write_datasets(indices_list, savename_list, images, labels, indices):
     """ Creates a partial 3dshapes datasets from the given set of indices.
@@ -166,7 +166,7 @@ def write_datasets(indices_list, savename_list, images, labels, indices):
         hf.close()
 
 
-def plot_label_distribution(indices, max_ind=10000):
+def plot_label_distribution(indices, labels, max_ind=10000):
     """ Plots the distribution over generative factors obtained from the labels
         list given the list of indices.
     Args:
@@ -180,7 +180,7 @@ def plot_label_distribution(indices, max_ind=10000):
         plt.clf()
         plt.hist(labels_plot[:, i], label=_FACTORS_IN_ORDER[i], 
                  bins=_NUM_VALUES_PER_FACTOR[_FACTORS_IN_ORDER[i]])
-        plt.show()
+    plt.show()
         
     
 def create_top_datasets():    
@@ -196,8 +196,8 @@ def create_model_splits(filename):
     """ Randomly splits the model split into smaller datasets of different
         sizes.
     
-    Returns:
-
+    Args:   
+        filename: name of the file to split further
     """
     dataset_split = h5py.File('datasets/{0}.h5'.format(filename), 'r')
     print(dataset_split.keys())
@@ -228,7 +228,23 @@ def create_model_splits(filename):
     dataset_split.close()
 
 
+def check_factor_distribution(filename):
+    """ Checks the distributions of generative factors in the given dataset split.
+    
+    Args:   
+        filename: name of the dataset file to load
+    """
+    dataset_split = h5py.File('datasets/{0}.h5'.format(filename), 'r')
+    print(dataset.keys())
+    dataset_labels = dataset_split['labels']  
+    dataset_indices = np.arange(len(dataset_labels))
+    plot_label_distribution(dataset_indices, dataset_labels)
+
+
+def main():
+    create_top_datasets()
+    create_model_splits('3dshapes_model_all')
+
+
 if __name__ == '__main__':
-#    create_top_datasets()
-#    create_model_splits('3dshapes_model_all')
     pass

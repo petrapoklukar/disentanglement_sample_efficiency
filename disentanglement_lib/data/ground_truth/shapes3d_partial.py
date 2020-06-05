@@ -26,10 +26,6 @@ import tensorflow as tf
 import h5py
 
 
-
-
-
-
 class Shapes3DPartial(ground_truth_data.GroundTruthData):
   """Shapes3D dataset.
 
@@ -44,18 +40,20 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
   5 - azimuth (15 different values)
   """
 
-  def __init__(self,name):
+  def __init__(self, name):
     SHAPES3D_PATH = os.path.join(
-    os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", name+".h5"
-    )
-
+    os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", name + ".h5")
+    
+    self.name = name
     with h5py.File(SHAPES3D_PATH, 'r') as dataset:
       images = dataset['images'][()]
       labels = dataset['labels'][()]
     n_samples = images.shape[0]
+    self.data_size = n_samples
     self.images = (
         images.reshape([n_samples, 64, 64, 3]).astype(np.float16) / 255.)
     features = labels.reshape([n_samples, 6])
+    self.labels = features
     self.factor_sizes = [10, 10, 10, 8, 4, 15]
     self.latent_factor_indices = list(range(6))
     self.num_total_factors = features.shape[1]
@@ -85,15 +83,24 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
     return self.state_space.sample_latent_factors(num, random_state)
 
   def sample_observations_from_factors(self, factors, random_state):
-    if self.data_size <400000:
-      imgs=self.observations_from_indices(factors,random_state)
+    if 'model' in self.name:
+      imgs = self.sample_observations(factors, random_state)
       return imgs
+
+    elif 'task' in self.name:
+        imgs. labels = self.sample_observations_and_labels(factors, random_state)
+        return imgs
     else:
       all_factors = self.state_space.sample_all_factors(factors, random_state)
       indices = np.array(np.dot(all_factors, self.factor_bases), dtype=np.int64)
       #random.randint(0:self.data_size-1)
       return self.images[indices]
 
-  def observations_from_indices(self,factors,random_state):
-    return self.images[random_state.randint(0,high=self.data_size-1,size=factors.shape[0])]
+  def sample_observations(self, factors, random_state):
+    return self.images[random_state.randint(0, high=self.data_size-1, size=factors.shape[0])]
+
+  def sample_observations_and_labels(self, num, random_state):
+    random_index = random_state.randint(0, high=self.data_size-1, 
+                                        size=num)
+    return self.images[random_index], self.labels[random_index]
 

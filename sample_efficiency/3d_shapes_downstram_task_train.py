@@ -1,32 +1,9 @@
-# coding=utf-8
-# Copyright 2018 The DisentanglementLib Authors.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jun  5 11:17:29 2020
 
-"""Example script how to get started with research using disentanglement_lib.
-
-To run the example, please change the working directory to the containing folder
-and run:
->> python example.py
-
-In this example, we show how to use disentanglement_lib to:
-1. Train a standard VAE (already implemented in disentanglement_lib).
-2. Train a custom VAE model.
-3. Extract the mean representations for both of these models.
-4. Compute the Mutual Information Gap (already implemented) for both models.
-5. Compute a custom disentanglement metric for both models.
-6. Aggregate the results.
-7. Print out the final Pandas data frame with the results.
+@author: petrapoklukar
 """
 
 # We group all the imports at the top.
@@ -59,33 +36,7 @@ overwrite = True
 
 # We save the results in a `vae` subfolder.
 path_vae = os.path.join(base_path, "vae")
-train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"])
-
-# The main training protocol of disentanglement_lib is defined in the
-# disentanglement_lib.methods.unsupervised.train module. To configure
-# training we need to provide a gin config. For a standard VAE, you may have a
-# look at model.gin on how to do this.
-#train.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"])
-# After this command, you should have a `vae` subfolder with a model that was
-# trained for a few steps (in reality, you will want to train many more steps).
-
-# 1b. Train beta VAE
-path_bvae = os.path.join(base_path, "bvae")
-#train_partial.train_with_gin(os.path.join(path_bvae, "model"), overwrite, ["3d_shape_bvae.gin"])
-
-# 1c. Train Factor VAE
-#path_fvae = os.path.join(base_path, "fvae")
-#train_partial.train_with_gin(os.path.join(path_fvae, "model"), overwrite, ["3d_shape_fvae.gin"])
-
-# 1c. Train Beta TC VAE
-#path_btcvae = os.path.join(base_path, "btcvae")
-#train_partial.train_with_gin(os.path.join(path_btcvae, "model"), overwrite, ["3d_shape_btcvae.gin"])
-
-# 1d. Train Anneal VAE
-#path_annvae = os.path.join(base_path, "annvae")
-#train_partial.train_with_gin(os.path.join(path_annvae, "model"), overwrite, ["3d_shape_annvae.gin"])
-
-
+#train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"])
 
 
 # 3. Extract the mean representation for both of these models.
@@ -93,7 +44,7 @@ path_bvae = os.path.join(base_path, "bvae")
 # To compute disentanglement metrics, we require a representation function that
 # takes as input an image and that outputs a vector with the representation.
 # We extract the mean of the encoder from both models using the following code.
-for path in [path_vae, path_bvae]:
+for path in [path_vae]:
   representation_path = os.path.join(path, "representation")
   model_path = os.path.join(path, "model")
   postprocess_gin = ["postprocess.gin"]  # This contains the settings.
@@ -102,6 +53,26 @@ for path in [path_vae, path_bvae]:
                                    postprocess_gin)
 
 
+# 4. Train a downstream task
+gin_bindings = [
+    "evaluation.evaluation_fn = @downstream_task_on_representations",
+    "dataset.name='3dshapes_task'",
+    "evaluation.random_seed = 0",
+    "downstream_task_on_representations.num_train=[100]",
+    "downstream_task_on_representations.num_test=50",
+    "predictor.predictor_fn = @mlp_regressor",
+    "mlp_regressor.hidden_layer_sizes = [32, 16]",
+    "mlp_regressor.activation='identity'",
+    "mlp_regressor.max_iter=10",
+    "mlp_regressor.random_state=0"
+]
+for path in [path_vae]:
+  result_path = os.path.join(path, "metrics", "downstream_task")
+  representation_path = os.path.join(path, "representation")
+  evaluate.evaluate_with_gin(
+      representation_path, result_path, overwrite, gin_bindings=gin_bindings)#["3d_shape_classifier.gin"])#gin_bindings=gin_bindings)
+
+pa = 1/0
 # 4. Compute the Mutual Information Gap (already implemented) for both models.
 # ------------------------------------------------------------------------------
 # The main evaluation protocol of disentanglement_lib is defined in the
@@ -128,7 +99,6 @@ for path in [path_vae, path_bvae]:
       representation_path, result_path, overwrite, gin_bindings=gin_bindings)
 
 
-a=1/0
 # 5. Compute a custom disentanglement metric for both models.
 # ------------------------------------------------------------------------------
 # The following function implements a dummy metric. Note that all metrics get
