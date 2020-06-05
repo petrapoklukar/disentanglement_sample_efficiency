@@ -309,7 +309,6 @@ def main():
 
 
 if __name__ == '__main__':
-    create_model_splits('3dshapes_model_all')
     random_state = np.random.RandomState(234)
     create_split_train_and_validation('3dshapes_model_s1000', 
                                       random_state, 
