@@ -270,7 +270,7 @@ def create_split_train_and_validation(dataset_name,
         assert(np.min(labels_split) == 0 and np.max(labels_split) == 1)
     
     print(dataset_size)
-    all_local_indices = np.arange(dataset_size, random_state=random_state)
+    all_local_indices = random_state.choice(dataset_size, dataset_size, replace=False)
     all_local_indices = random_state.shuffle(all_local_indices)
     splitratio = int(len(dataset_size) * 0.15)
     print(all_local_indices.shape)
