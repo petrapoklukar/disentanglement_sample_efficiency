@@ -41,7 +41,6 @@ def main(unused_argv):
   datasets = ["3dshapes_model_s1000", "3dshapes_model_s10000", 
               "3dshapes_model_s50000", "3dshapes_model_s100000",
               "3dshapes_model_s150000", "3dshapes_model_s250000"]
-  datasets = ["3dshapes_model_s1000"]
   base_path = "3d_shape_out"
   
   
@@ -73,8 +72,8 @@ def main(unused_argv):
     ]
     vae_path = os.path.join(base_path, FLAGS.model+dataset)
     train_vae_path = os.path.join(vae_path, 'model')
-#    train_partial.train_with_gin(train_vae_path, FLAGS.overwrite,
-#                         [gin_file], vae_gin_bindings)
+    train_partial.train_with_gin(train_vae_path, FLAGS.overwrite,
+                         [gin_file], vae_gin_bindings)
 
     postprocess_gin_bindings = [
             "postprocess.postprocess_fn = @mean_representation",
@@ -90,15 +89,15 @@ def main(unused_argv):
     
     downstream_train_gin_bindings = [
         "evaluation.evaluation_fn = @downstream_task_on_representations",
-        "dataset.name = '3dshapes_task_s1000'",
+        "dataset.name = '3dshapes_task'",
         "evaluation.random_seed = %d" %(FLAGS.rng),
-        "downstream_task_on_representations.num_train=[850]",
-        "downstream_task_on_representations.num_test=150",
+        "downstream_task_on_representations.num_train = [127500]",
+        "downstream_task_on_representations.num_test = 22500",
         "predictor.predictor_fn = @mlp_regressor",
         "mlp_regressor.hidden_layer_sizes = [32, 16]",
-        "mlp_regressor.activation='logistic'",
-        "mlp_regressor.max_iter=10",
-        "mlp_regressor.random_state=0"
+        "mlp_regressor.activation = 'logistic'",
+        "mlp_regressor.max_iter = 100",
+        "mlp_regressor.random_state = 0"
     ]
     result_path = os.path.join(vae_path, "metrics", "downstream_task")
     evaluate.evaluate_with_gin(

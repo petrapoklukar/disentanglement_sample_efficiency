@@ -158,6 +158,6 @@ def _compute_mse_loss(x_train, y_train, x_test, y_test, predictor_fn):
   for i in range(num_factors):
     model = predictor_fn()
     model.fit(x_train, y_train[i, :])
-    train_loss.append(np.mean(mean_squared_error(model.predict(x_train), y_train[i, :])))
+    train_loss.append(mean_squared_error(model.predict(x_train), y_train[i, :]))
     test_loss.append(mean_squared_error(model.predict(x_test), y_test[i, :]))
   return train_loss, test_loss
