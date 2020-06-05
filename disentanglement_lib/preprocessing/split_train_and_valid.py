@@ -28,6 +28,10 @@ def create_split_train_and_validation(dataset_name, random_state):
     indices_split = dataset_split['indices'][()]
     dataset_size = len(images_split)
     
+    ims = np.array(images_split)
+    labs = np.array(labels_split)
+    inds = np.array(indices_split)
+    
     print(dataset_size)
     all_local_indices = np.arange(dataset_size, random_state=random_state)
     all_local_indices = random_state.shuffle(all_local_indices)
@@ -36,27 +40,22 @@ def create_split_train_and_validation(dataset_name, random_state):
     train_local_indices = all_local_indices[:splitratio]
     test_local_indices = all_local_indices[splitratio:]
     
-    images_split_train = images_split[train_local_indices]
-    labels_split_train = labels_split[train_local_indices]
-    indices_split_train = indices_split[train_local_indices]
-    
-    images_split_test = images_split[test_local_indices]
-    labels_split_test = labels_split[test_local_indices]
-    indices_split_test = indices_split[test_local_indices]
-    
-    split_indices = []
-    for split_size in split_sizes:
-        model_split_indices = all_indices[:split_size]    
-        assert(model_split_indices.shape[0] == split_size)
-        split_indices.append(model_split_indices)
-    
-    assert(np.intersect1d(split_indices[0], 
-                          split_indices[num_splits]).size == split_sizes[0] \
-            for num_splits in range(len(split_sizes)))
-    
-    savename_list = []
-    for split_size in range(len(split_sizes)): 
-        savename_list.append('3dshapes_model_s{0}'.format(split_sizes[split_size]))
+    print('Writing files')
+    for indices, split in list(zip([train_local_indices, test_local_indices], 
+                                      ['_train', '_valid'])):
+        SPLIT_SHAPES3D_PATH = os.path.join(
+            os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
+            dataset_name + split + ".h5")
+
+        assert(ims[indices].shape[0] == indices.shape[0])
+        assert(labs[indices].shape[0] == indices.shape[0])
+        assert(inds[indices].shape[0] == indices.shape[0])
+        hf = h5py.File(SPLIT_SHAPES3D_PATH, 'w')
+        hf.create_dataset('images', data=ims[indices])
+        hf.create_dataset('labels', data=labs[indices])
+        hf.create_dataset('indices', data=inds[indices])
+        hf.close()
         
-    write_datasets(split_indices, savename_list, images_split, labels_split, indices_split)
     dataset_split.close()
+    
+

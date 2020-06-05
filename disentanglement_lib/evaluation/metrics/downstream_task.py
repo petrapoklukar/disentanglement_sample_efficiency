@@ -82,7 +82,8 @@ def compute_downstream_task(ground_truth_data,
 
 @gin.configurable(
     "downstream_task_on_representations",
-    blacklist=["ground_truth_data", "representation_function", "random_state",
+    blacklist=["ground_truth_train_data", "ground_truth_test_data", 
+               "representation_function", "random_state",
                "artifact_dir"])
 def compute_downstream_task_on_representations(ground_truth_train_data,
                                                ground_truth_test_data,

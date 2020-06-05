@@ -97,7 +97,7 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
       return self.images[indices]
 
   def sample_observations(self, factors, random_state):
-    return self.images[random_state.randint(0, high=self.data_size-1, size=factors.shape[0])]
+    return self.images[random_state.randint(0, high=self.data_size-1, size=1)]
 
   def sample_observations_and_labels(self, num, random_state):
     random_index = random_state.randint(0, high=self.data_size-1, 
