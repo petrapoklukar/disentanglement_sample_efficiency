@@ -9,10 +9,9 @@ Created on Thu Jun  4 11:46:32 2020
 from matplotlib import pyplot as plt
 import numpy as np
 import h5py
-import gin.tf
 
 # load dataset
-dataset = h5py.File('datasets/3dshapes.h5', 'r')
+dataset = h5py.File('datasets/3dshapes/3dshapes.h5', 'r')
 print(dataset.keys())
 images = dataset['images']  # array shape [480000,64,64,3], uint8 in range(256)
 labels = dataset['labels']  # array shape [480000,6], float64
@@ -241,10 +240,69 @@ def check_factor_distribution(filename):
     plot_label_distribution(dataset_indices, dataset_labels)
 
 
+def create_split_train_and_validation(dataset_name, 
+                                      random_state, 
+                                      unit_labels=False):
+    """ Randomly splits the model split into smaller datasets of different
+        sizes.
+    
+    Args:   
+        filename: name of the file to split further
+    """
+    SHAPES3D_PATH = 'datasets/{0}.h5'.format(dataset_name)
+    dataset_split = h5py.File(SHAPES3D_PATH, 'r')
+    print(dataset_split.keys())
+    images_split = dataset_split['images'][()]
+    labels_split = dataset_split['labels'][()]
+    indices_split = dataset_split['indices'][()]
+    dataset_size = len(images_split)
+    
+    ims = np.array(images_split)
+    labs = np.array(labels_split)
+    inds = np.array(indices_split)
+    print(ims.shape, labs.shape, inds.shape)
+    
+    if unit_labels:
+        labels_min = np.array([0., 0., 0., 0.75, 0., -30.])
+        labels_max = np.array([0.9, 0.9, 0.9, 1.25, 3., 30.])
+        labels_split = (labels_split - labels_min)/(labels_max - labels_min)
+        print(labels_split.shape)
+        assert(np.min(labels_split) == 0 and np.max(labels_split) == 1)
+    
+    print(dataset_size)
+    all_local_indices = np.arange(dataset_size, random_state=random_state)
+    all_local_indices = random_state.shuffle(all_local_indices)
+    splitratio = int(len(dataset_size) * 0.15)
+    print(all_local_indices.shape)
+
+    train_local_indices = all_local_indices[:splitratio]
+    test_local_indices = all_local_indices[splitratio:]
+    print(train_local_indices.shape, test_local_indices.shape)
+    
+    print('Writing files')
+    for indices, split in list(zip([train_local_indices, test_local_indices], 
+                                      ['_train', '_valid'])):
+#        SPLIT_SHAPES3D_PATH = os.path.join(
+#            os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
+#            dataset_name + split + ".h5")
+        SPLIT_SHAPES3D_PATH = 'datasets/{0}{1}.h5'.format(dataset_name, split)
+
+        assert(ims[indices].shape[0] == indices.shape[0])
+        assert(labs[indices].shape[0] == indices.shape[0])
+        assert(inds[indices].shape[0] == indices.shape[0])
+        hf = h5py.File(SPLIT_SHAPES3D_PATH, 'w')
+        hf.create_dataset('images', data=ims[indices])
+        hf.create_dataset('labels', data=labs[indices])
+        hf.create_dataset('indices', data=inds[indices])
+        hf.close()
+        
+    dataset_split.close()
+
 def main():
     create_top_datasets()
     create_model_splits('3dshapes_model_all')
 
 
 if __name__ == '__main__':
+    random_state = np.random.RandomState(234)
     pass

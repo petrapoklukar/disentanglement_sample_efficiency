@@ -11,8 +11,11 @@ import h5py
 import os
 import gin.tf
 
-@gin.configurable("split_train_and_validation")
-def create_split_train_and_validation(dataset_name, random_state):
+@gin.configurable("split_train_and_validation", 
+                  blacklist=["dataset_name", "random_state"])
+def create_split_train_and_validation(dataset_name, 
+                                      random_state, 
+                                      unit_labels=False):
     """ Randomly splits the model split into smaller datasets of different
         sizes.
     
@@ -31,6 +34,12 @@ def create_split_train_and_validation(dataset_name, random_state):
     ims = np.array(images_split)
     labs = np.array(labels_split)
     inds = np.array(indices_split)
+    
+    if unit_labels:
+        labels_min = np.array([0., 0., 0., 0.75, 0., -30.])
+        labels_max = np.array([0.9, 0.9, 0.9, 1.25, 3., 30.])
+        labels_split = (labels_split - labels_min)/(labels_max - labels_min)
+        assert(np.min(labels_split) == 0 and np.max(labels_split) == 1)
     
     print(dataset_size)
     all_local_indices = np.arange(dataset_size, random_state=random_state)
