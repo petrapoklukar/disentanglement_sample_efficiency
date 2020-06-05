@@ -198,7 +198,7 @@ def create_model_splits(filename):
     Args:   
         filename: name of the file to split further
     """
-    dataset_split = h5py.File('datasets/{0}.h5'.format(filename), 'r')
+    dataset_split = h5py.File('datasets/3dshapes/{0}.h5'.format(filename), 'r')
     print(dataset_split.keys())
     images_split = dataset_split['images'] 
     labels_split = dataset_split['labels'] 
@@ -207,7 +207,7 @@ def create_model_splits(filename):
     print(len(images_split))
     np.random.seed(2610)
     all_indices = np.arange(len(indices_split))
-    split_sizes = [10000, 50000, 100000, 150000, 250000]
+    split_sizes = [1000]#[10000, 50000, 100000, 150000, 250000]
     
     split_indices = []
     for split_size in split_sizes:
@@ -302,11 +302,17 @@ def create_split_train_and_validation(dataset_name,
 def main():
     create_top_datasets()
     create_model_splits('3dshapes_model_all')
-
-
-if __name__ == '__main__':
     random_state = np.random.RandomState(234)
     create_split_train_and_validation('3dshapes_model_s10000', 
                                       random_state, 
                                       unit_labels=True)
+
+
+if __name__ == '__main__':
+    create_model_splits('3dshapes_model_all')
+    random_state = np.random.RandomState(234)
+    create_split_train_and_validation('3dshapes_model_s1000', 
+                                      random_state, 
+                                      unit_labels=False)
+
     
