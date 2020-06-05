@@ -271,7 +271,7 @@ def create_split_train_and_validation(dataset_name,
     
     print(dataset_size)
     all_local_indices = random_state.choice(dataset_size, dataset_size, replace=False)
-    all_local_indices = random_state.shuffle(all_local_indices)
+    random_state.shuffle(all_local_indices)
     splitratio = int(dataset_size * 0.15)
     print(all_local_indices.shape)
 
@@ -308,3 +308,4 @@ if __name__ == '__main__':
     create_split_train_and_validation('3dshapes_model_s10000', 
                                       random_state, 
                                       unit_labels=False)
+    
