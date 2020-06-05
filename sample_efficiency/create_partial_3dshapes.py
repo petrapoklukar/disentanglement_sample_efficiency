@@ -307,5 +307,5 @@ if __name__ == '__main__':
     random_state = np.random.RandomState(234)
     create_split_train_and_validation('3dshapes_model_s10000', 
                                       random_state, 
-                                      unit_labels=False)
+                                      unit_labels=True)
     
