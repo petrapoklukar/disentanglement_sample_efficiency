@@ -265,6 +265,7 @@ def create_split_train_and_validation(dataset_name,
     if unit_labels:
         labels_min = np.array([0., 0., 0., 0.75, 0., -30.])
         labels_max = np.array([0.9, 0.9, 0.9, 1.25, 3., 30.])
+        print(labels_split.shape, labels_min.shape, labels_max.shape)
         labels_split = (labels_split - labels_min)/(labels_max - labels_min)
         print(labels_split.shape)
         assert(np.min(labels_split) == 0 and np.max(labels_split) == 1)
@@ -272,7 +273,7 @@ def create_split_train_and_validation(dataset_name,
     print(dataset_size)
     all_local_indices = random_state.choice(dataset_size, dataset_size, replace=False)
     random_state.shuffle(all_local_indices)
-    splitratio = int(dataset_size * 0.15)
+    splitratio = int(dataset_size * 0.85)
     print(all_local_indices.shape)
 
     train_local_indices = all_local_indices[:splitratio]
