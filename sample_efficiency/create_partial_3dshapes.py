@@ -142,30 +142,28 @@ def create_top_splits():
     assert(not np.intersect1d(task_indices, holdout_indices).size > 0)
     return model_indices, task_indices, holdout_indices
     
-    
-def create_dataset(indices, savename, images, labels):
+        
+
+def write_datasets(indices_list, savename_list, images, labels, indices):
     """ Creates a partial 3dshapes datasets from the given set of indices.
     Args:
         indices: list of indices in the original 3dshapes datasets
         name: name of the file to save the samples
     """
-    ims, labs = [], []
-    counter = 0
-    dataset_len = len(indices) 
-    for ind in indices:
-        image = np.asarray(images[ind])
-        ims.append(image)
-        label = np.asarray(labels[ind])
-        labs.append(label)
-        counter += 1 
-        if counter % 10000 == 0:
-            print('Processed {0}/{1}'.format(counter, dataset_len))
-        
-    hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
-    hf.create_dataset('images', data=ims)
-    hf.create_dataset('labels', data=labs)
-    hf.create_dataset('indices', data=indices)
-    hf.close()
+    print('Creating np arrays...')
+    ims = np.array(images)
+    print('Creating np arrays...')
+    labs = np.array(labels)
+    print('Creating np arrays...')
+    inds = np.array(indices)
+    
+    print('Writing files')
+    for indices, savename in list(zip(indices_list, savename_list)):
+        hf = h5py.File('datasets/{0}.h5'.format(savename), 'w')
+        hf.create_dataset('images', data=ims[indices])
+        hf.create_dataset('labels', data=labs[indices])
+        hf.create_dataset('indices', data=inds[indices])
+        hf.close()
 
 
 def plot_label_distribution(indices, max_ind=10000):
@@ -189,13 +187,12 @@ def create_top_datasets():
     """ Creates random model split, task split and holdout splits. The splits
         are disjoint.
     """
-    model_indices, task_indices, holdout_indices = create_top_splits()
-    create_dataset(model_indices, '3dshapes_model_all', images, labels)
-    create_dataset(task_indices, '3dshapes_task', images, labels)
-    create_dataset(holdout_indices, '3dshapes_holdout', images, labels)
-    
+    top_split_indices = create_top_splits()
+    top_split_names = ['3dshapes_model_all', '3dshapes_task', '3dshapes_holdout']
+    write_datasets(top_split_indices, top_split_names, images, labels)
 
-def create_model_splits(filename, savename):
+
+def create_model_splits(filename):
     """ Randomly splits the model split into smaller datasets of different
         sizes.
     
@@ -206,8 +203,11 @@ def create_model_splits(filename, savename):
     print(dataset_split.keys())
     images_split = dataset_split['images'] 
     labels_split = dataset_split['labels'] 
+    indices_split = dataset_split['indices']
+    
+    print(len(images_split))
     np.random.seed(2610)
-    all_indices = np.arange(len(images))
+    all_indices = np.arange(len(indices_split))
     split_sizes = [10000, 50000, 100000, 150000, 250000]
     
     split_indices = []
@@ -218,24 +218,17 @@ def create_model_splits(filename, savename):
     
     assert(np.intersect1d(split_indices[0], 
                           split_indices[num_splits]).size == split_sizes[0] \
-            for num_splits in range(len(split_size)))
+            for num_splits in range(len(split_sizes)))
     
+    savename_list = []
     for split_size in range(len(split_sizes)): 
-        savename = '3dshapes_model_s{0}'.format(split_sizes[split_size])
-        create_dataset(split_indices[split_size], savename, 
-                       images_split, labels_split)       
+        savename_list.append('3dshapes_model_s{0}'.format(split_sizes[split_size]))
+        
+    write_datasets(split_indices, savename_list, images_split, labels_split, indices_split)
     dataset_split.close()
 
 
-
-
-#img_batch = sample_batch(batch_size, 5, 15)
-#show_images_grid(img_batch, num_images=16)
-
-#hf = h5py.File('datasets/3dshapes_test.h5', 'w')
-#hf.create_dataset('images', data=random_batch[0])
-#hf.create_dataset('labels', data=random_batch[1])
-#hf.close()
-#
-#dataset_test = h5py.File('datasets/3dshapes_test.h5', 'r')
-#dataset_test.close()
+if __name__ == '__main__':
+#    create_top_datasets()
+#    create_model_splits('3dshapes_model_all')
+    pass
