@@ -13,13 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dataset.name = "3dshapes_test"
 model.batch_size = 64
 model.model = @annealed_vae()
-model.random_seed = 0
-annealed_vae.gamma = 4 #RANDOM GUESS
-annealed_vae.c_max = 40 #RANDOM GUESS
-annealed_vae.iteration_threshold = 400 #RANDOM GUESS
+annealed_vae.gamma = 1000 
+annealed_vae.c_max = 50 
+annealed_vae.iteration_threshold = 100000
 encoder.num_latent = 10
 vae_optimizer.optimizer_fn = @AdamOptimizer
 # We train for only 5 steps, in practice we train for 300000 steps.

@@ -13,15 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dataset.name = "3dshapes_test"
 model.batch_size = 64
 model.model = @factor_vae()
-model.random_seed = 0
-factor_vae.gamma = 10
+factor_vae.gamma = 7
 encoder.num_latent = 10
 vae_optimizer.optimizer_fn = @AdamOptimizer
 # We train for only 5 steps, in practice we train for 300000 steps.
-model.training_steps = 5
+model.training_steps = 150000
 model.random_seed=0
 AdamOptimizer.beta1 = 0.9
 AdamOptimizer.beta2 = 0.999

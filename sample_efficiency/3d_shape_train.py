@@ -60,7 +60,7 @@ overwrite = True
 
 # We save the results in a `vae` subfolder.
 path_vae = os.path.join(base_path, "vae")
-train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"])
+#train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"])
 
 # The main training protocol of disentanglement_lib is defined in the
 # disentanglement_lib.methods.unsupervised.train module. To configure
@@ -72,33 +72,33 @@ train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_sh
 
 # 1b. Train beta VAE
 path_bvae = os.path.join(base_path, "bvae")
-train_partial.train_with_gin(os.path.join(path_bvae, "model"), overwrite, ["3d_shape_bvae.gin"])
+#train_partial.train_with_gin(os.path.join(path_bvae, "model"), overwrite, ["3d_shape_bvae.gin"])
 
 # 1c. Train Factor VAE
-#path_fvae = os.path.join(base_path, "fvae")
-train_partial.train_with_gin(os.path.join(path_fvae, "model"), overwrite, ["3d_shape_fvae.gin"])
+# path_fvae = os.path.join(base_path, "fvae")
+# train_partial.train_with_gin(os.path.join(path_fvae, "model"), overwrite, ["3d_shape_fvae.gin"])
 
-# 1c. Train Beta TC VAE
-#path_btcvae = os.path.join(base_path, "btcvae")
-train_partial.train_with_gin(os.path.join(path_btcvae, "model"), overwrite, ["3d_shape_btcvae.gin"])
+# # 1c. Train Beta TC VAE
+# path_btcvae = os.path.join(base_path, "btcvae")
+# train_partial.train_with_gin(os.path.join(path_btcvae, "model"), overwrite, ["3d_shape_btcvae.gin"])
 
-# 1d. Train Anneal VAE
-#path_annvae = os.path.join(base_path, "annvae")
-train_partial.train_with_gin(os.path.join(path_annvae, "model"), overwrite, ["3d_shape_annvae.gin"])
+# # 1d. Train Anneal VAE
+# path_annvae = os.path.join(base_path, "annvae")
+# train_partial.train_with_gin(os.path.join(path_annvae, "model"), overwrite, ["3d_shape_annvae.gin"])
 
 
-# 3. Extract the mean representation for both of these models.
-# ------------------------------------------------------------------------------
-# To compute disentanglement metrics, we require a representation function that
-# takes as input an image and that outputs a vector with the representation.
-# We extract the mean of the encoder from both models using the following code.
-for path in [path_vae, path_bvae]:
-  representation_path = os.path.join(path, "representation")
-  model_path = os.path.join(path, "model")
-  postprocess_gin = ["postprocess.gin"]  # This contains the settings.
-  # postprocess.postprocess_with_gin defines the standard extraction protocol.
-  postprocess.postprocess_with_gin(model_path, representation_path, overwrite,
-                                   postprocess_gin)
+# # 3. Extract the mean representation for both of these models.
+# # ------------------------------------------------------------------------------
+# # To compute disentanglement metrics, we require a representation function that
+# # takes as input an image and that outputs a vector with the representation.
+# # We extract the mean of the encoder from both models using the following code.
+# for path in [path_vae, path_bvae]:
+#   representation_path = os.path.join(path, "representation")
+#   model_path = os.path.join(path, "model")
+#   postprocess_gin = ["postprocess.gin"]  # This contains the settings.
+#   # postprocess.postprocess_with_gin defines the standard extraction protocol.
+#   postprocess.postprocess_with_gin(model_path, representation_path, overwrite,
+#                                    postprocess_gin)
 
 
 # 4. Compute the Mutual Information Gap (already implemented) for both models.
@@ -209,4 +209,4 @@ for path in [path_vae, path_bvae]:
 
 #8 Visulisation
 for path in [path_vae, path_bvae]:
-  visualize_model.visualize(path, path+"/vis", overwrite)
+  visualize_model.visualize(path+"/model", path+"/vis", overwrite)

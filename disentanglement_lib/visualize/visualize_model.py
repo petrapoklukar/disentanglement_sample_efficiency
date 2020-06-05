@@ -79,7 +79,7 @@ def visualize(model_dir,
     raise ValueError(
         "Activation function  could not be infered from gin config.")
 
-  dataset = named_data.get_named_ground_truth_data()
+  _,dataset = named_data.get_named_ground_truth_data()
   num_pics = 64
   module_path = os.path.join(model_dir, "tfhub")
 
