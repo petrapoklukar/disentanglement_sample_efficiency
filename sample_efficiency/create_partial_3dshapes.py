@@ -249,7 +249,7 @@ def create_split_train_and_validation(dataset_name,
     Args:   
         filename: name of the file to split further
     """
-    SHAPES3D_PATH = 'datasets/{0}.h5'.format(dataset_name)
+    SHAPES3D_PATH = 'datasets/3dshapes/{0}.h5'.format(dataset_name)
     dataset_split = h5py.File(SHAPES3D_PATH, 'r')
     print(dataset_split.keys())
     images_split = dataset_split['images'][()]
@@ -285,7 +285,7 @@ def create_split_train_and_validation(dataset_name,
 #        SPLIT_SHAPES3D_PATH = os.path.join(
 #            os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
 #            dataset_name + split + ".h5")
-        SPLIT_SHAPES3D_PATH = 'datasets/{0}{1}.h5'.format(dataset_name, split)
+        SPLIT_SHAPES3D_PATH = 'datasets/3dshapes/{0}{1}.h5'.format(dataset_name, split)
 
         assert(ims[indices].shape[0] == indices.shape[0])
         assert(labs[indices].shape[0] == indices.shape[0])
