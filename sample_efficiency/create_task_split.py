@@ -19,7 +19,7 @@ preproces_task_gin_bindings = [
         "split_train_and_validation.unit_labels = True"
 ]
 
-preprocess.preprocess_with_gin('3dshapes_task_s1000',
+preprocess.preprocess_with_gin('3dshapes_task',
                                overwrite=False,
                                gin_config_files=None,
                                gin_bindings=preproces_task_gin_bindings)
