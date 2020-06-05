@@ -40,7 +40,6 @@ def create_split_train_and_validation(dataset_name,
         labels_min = np.array([0., 0., 0., 0.75, 0., -30.])
         labels_max = np.array([0.9, 0.9, 0.9, 1.25, 3., 30.])
         labels_split = (labels_split - labels_min)/(labels_max - labels_min)
-        print(labels_split.shape)
         assert(np.min(labels_split) == 0 and np.max(labels_split) == 1)
     
     all_local_indices = random_state.choice(dataset_size, dataset_size, replace=False)

@@ -11,6 +11,7 @@ Preprocessing step that creates train and validation splits.
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from disentanglement_lib.preprocessing import methods
 import numpy as np
 
 import gin.tf

@@ -21,6 +21,7 @@ from disentanglement_lib.evaluation.metrics import utils
 import numpy as np
 from six.moves import range
 import gin.tf
+from sklearn.metrics import mean_squared_error
 
 
 @gin.configurable(
@@ -82,11 +83,9 @@ def compute_downstream_task(ground_truth_data,
 
 @gin.configurable(
     "downstream_task_on_representations",
-    blacklist=["ground_truth_train_data", "ground_truth_test_data", 
-               "representation_function", "random_state",
+    blacklist=["ground_truth_data", "representation_function", "random_state",
                "artifact_dir"])
-def compute_downstream_task_on_representations(ground_truth_train_data,
-                                               ground_truth_test_data,
+def compute_downstream_task_on_representations(ground_truth_data,
                                                representation_function,
                                                random_state,
                                                artifact_dir=None,
@@ -109,6 +108,7 @@ def compute_downstream_task_on_representations(ground_truth_train_data,
     Dictionary with scores.
   """
   del artifact_dir
+  ground_truth_train_data, ground_truth_test_data = ground_truth_data
   scores = {}
   for train_size in num_train:
     mus_train, ys_train = utils.generate_batch_label_code(
@@ -119,23 +119,21 @@ def compute_downstream_task_on_representations(ground_truth_train_data,
         batch_size)
     predictor_model = utils.make_predictor_fn()
 
-    print(mus_train.shape, ys_train.shape)
-    train_err, test_err = _compute_loss(
+    train_err, test_err = _compute_mse_loss(
         np.transpose(mus_train), ys_train, np.transpose(mus_test),
         ys_test, predictor_model)
     size_string = str(train_size)
     scores[size_string +
-           ":mean_train_accuracy"] = np.mean(train_err)
+           ":mean_train_mse"] = np.mean(train_err)
     scores[size_string +
-           ":mean_test_accuracy"] = np.mean(test_err)
+           ":mean_test_mse"] = np.mean(test_err)
     scores[size_string +
-           ":min_train_accuracy"] = np.min(train_err)
-    scores[size_string + ":min_test_accuracy"] = np.min(test_err)
+           ":min_train_mse"] = np.min(train_err)
+    scores[size_string + ":min_test_mse"] = np.min(test_err)
     for i in range(len(train_err)):
       scores[size_string +
-             ":train_accuracy_factor_{}".format(i)] = train_err[i]
-      scores[size_string + ":test_accuracy_factor_{}".format(i)] = test_err[i]
-
+             ":train_mse_factor_{}".format(i)] = train_err[i]
+      scores[size_string + ":test_mse_factor_{}".format(i)] = test_err[i]
   return scores
 
 
@@ -149,4 +147,17 @@ def _compute_loss(x_train, y_train, x_test, y_test, predictor_fn):
     model.fit(x_train, y_train[i, :])
     train_loss.append(np.mean(model.predict(x_train) == y_train[i, :]))
     test_loss.append(np.mean(model.predict(x_test) == y_test[i, :]))
+  return train_loss, test_loss
+
+
+def _compute_mse_loss(x_train, y_train, x_test, y_test, predictor_fn):
+  """Compute average accuracy for train and test set."""
+  num_factors = y_train.shape[0]
+  train_loss = []
+  test_loss = []
+  for i in range(num_factors):
+    model = predictor_fn()
+    model.fit(x_train, y_train[i, :])
+    train_loss.append(np.mean(mean_squared_error(model.predict(x_train), y_train[i, :])))
+    test_loss.append(mean_squared_error(model.predict(x_test), y_test[i, :]))
   return train_loss, test_loss

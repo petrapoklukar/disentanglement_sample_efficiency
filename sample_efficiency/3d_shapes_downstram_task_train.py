@@ -22,21 +22,15 @@ from disentanglement_lib.utils import aggregate_results
 import tensorflow as tf
 import gin.tf
 
-# 0. Settings
-# ------------------------------------------------------------------------------
-# By default, we save all the results in subdirectories of the following path.
-base_path = "3d_shape_out"
-
-# By default, we do not overwrite output directories. Set this to True, if you
-# want to overwrite (in particular, if you rerun this script several times).
+base_path = "3d_shape_out2"
 overwrite = True
-
-# 1. Train a standard VAE (already implemented in disentanglement_lib).
-# ------------------------------------------------------------------------------
-
-# We save the results in a `vae` subfolder.
 path_vae = os.path.join(base_path, "vae")
-#train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"])
+vae_gin_bindings = [
+      "model.random_seed = 0",
+      "dataset.name = '3dshapes_model_s1000'"
+    ]
+#train_partial.train_with_gin(os.path.join(path_vae, "model"), overwrite, ["3d_shape_vae.gin"], 
+#                             gin_bindings=vae_gin_bindings)
 
 
 # 3. Extract the mean representation for both of these models.
@@ -44,19 +38,22 @@ path_vae = os.path.join(base_path, "vae")
 # To compute disentanglement metrics, we require a representation function that
 # takes as input an image and that outputs a vector with the representation.
 # We extract the mean of the encoder from both models using the following code.
+postprocess_gin_bindings = [
+    "postprocess.postprocess_fn = @mean_representation",
+    "dataset.name='dummy_data'", 
+    "postprocess.random_seed = 0"]
 for path in [path_vae]:
   representation_path = os.path.join(path, "representation")
   model_path = os.path.join(path, "model")
-  postprocess_gin = ["postprocess.gin"]  # This contains the settings.
   # postprocess.postprocess_with_gin defines the standard extraction protocol.
   postprocess.postprocess_with_gin(model_path, representation_path, overwrite,
-                                   postprocess_gin)
+                                   gin_config_files=None, gin_bindings=postprocess_gin_bindings)
 
 
 # 4. Train a downstream task
 gin_bindings = [
     "evaluation.evaluation_fn = @downstream_task_on_representations",
-    "dataset.name='3dshapes_task'",
+    "dataset.name='3dshapes_task_s1000'",
     "evaluation.random_seed = 0",
     "downstream_task_on_representations.num_train=[100]",
     "downstream_task_on_representations.num_test=50",
