@@ -52,11 +52,9 @@ def preprocess(dataset_name,
   """Loads a trained Gaussian encoder and extracts representation.
 
   Args:
-    model_dir: String with path to directory where the model is saved.
-    output_dir: String with the path where the representation should be saved.
+    dataset_name: String with dataset name to split into train and validation.
     overwrite: Boolean indicating whether to overwrite output directory.
-    postprocess_fn: Function used to extract the representation (see methods.py
-      for examples).
+    preprocess_fn: Function used to split the dataset.
     random_seed: Integer with random seed used for postprocessing (may be
       unused).
     name: Optional string with name of the representation (can be used to name
