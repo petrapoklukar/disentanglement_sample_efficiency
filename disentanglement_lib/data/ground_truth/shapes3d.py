@@ -52,7 +52,7 @@ class Shapes3D(ground_truth_data.GroundTruthData):
       labels = dataset['labels'][()]
     n_samples = images.shape[0]
     self.images = (
-        images.reshape([n_samples, 64, 64, 3]).astype(np.float32) / 255.)
+        images.reshape([n_samples, 64, 64, 3]).astype(np.float16) / 255.)
     features = labels.reshape([n_samples, 6])
     self.factor_sizes = [10, 10, 10, 8, 4, 15]
     self.latent_factor_indices = list(range(6))

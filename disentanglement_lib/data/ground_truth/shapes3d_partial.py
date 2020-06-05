@@ -52,10 +52,9 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
     with h5py.File(SHAPES3D_PATH, 'r') as dataset:
       images = dataset['images'][()]
       labels = dataset['labels'][()]
-      n_samples = images.shape[0]
-      self.data_size=n_samples
+    n_samples = images.shape[0]
     self.images = (
-        images.reshape([n_samples, 64, 64, 3]).astype(np.float32) / 255.)
+        images.reshape([n_samples, 64, 64, 3]).astype(np.float16) / 255.)
     features = labels.reshape([n_samples, 6])
     self.factor_sizes = [10, 10, 10, 8, 4, 15]
     self.latent_factor_indices = list(range(6))
@@ -87,14 +86,14 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
 
   def sample_observations_from_factors(self, factors, random_state):
     if self.data_size <400000:
-      imgs=self.observations_from_indices(random_state)
-      return [imgs]
+      imgs=self.observations_from_indices(factors,random_state)
+      return imgs
     else:
       all_factors = self.state_space.sample_all_factors(factors, random_state)
       indices = np.array(np.dot(all_factors, self.factor_bases), dtype=np.int64)
       #random.randint(0:self.data_size-1)
       return self.images[indices]
 
-  def observations_from_indices(self,random_state):
-    return self.images[random_state.randint(0,self.data_size-1)]
+  def observations_from_indices(self,factors,random_state):
+    return self.images[random_state.randint(0,high=self.data_size-1,size=factors.shape[0])]
 
