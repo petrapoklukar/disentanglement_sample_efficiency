@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dataset.name = "3dshapes_test"
+dataset.name = "3dshapes_model_s10000"
 model.batch_size = 64
 model.model = @vae()
 model.random_seed = 0
