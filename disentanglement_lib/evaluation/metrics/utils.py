@@ -23,6 +23,7 @@ import sklearn
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.model_selection import KFold
+from sklearn.neural_network import MLPRegressor
 import gin.tf
 
 
@@ -59,6 +60,29 @@ def generate_batch_factor_code(ground_truth_data, representation_function,
                                        current_observations)))
     i += num_points_iter
   return np.transpose(representations), np.transpose(factors)
+
+
+def generate_batch_label_code(ground_truth_data, representation_function,
+                               num_points, random_state, batch_size):
+  """TBA
+  """
+  representations = None
+  labels = None
+  i = 0
+  while i < num_points:
+    num_points_iter = min(num_points - i, batch_size)
+    current_observations, current_labels = \
+        ground_truth_data.sample_observations_and_labels(num_points_iter, random_state)
+    if i == 0:
+      labels = current_labels
+      representations = representation_function(current_observations)
+    else:
+      labels = np.vstack((labels, current_labels))
+      representations = np.vstack((representations,
+                                   representation_function(
+                                       current_observations)))
+    i += num_points_iter
+  return np.transpose(representations), np.transpose(labels)
 
 
 def split_train_test(observations, train_percentage):
@@ -174,3 +198,13 @@ def logistic_regression_cv():
 def gradient_boosting_classifier():
   """Default gradient boosting classifier."""
   return GradientBoostingClassifier()
+
+@gin.configurable("mlp_regressor")
+def mlp_regressor(hidden_layer_sizes=gin.REQUIRED,
+                  activation=gin.REQUIRED,
+                  max_iter=gin.REQUIRED,
+                  random_state=gin.REQUIRED):
+  """Default MLP Regressor."""
+  print(activation, max_iter)
+  return MLPRegressor(hidden_layer_sizes=hidden_layer_sizes, activation=activation, 
+                      max_iter=max_iter, random_state=random_state)

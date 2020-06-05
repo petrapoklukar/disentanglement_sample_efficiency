@@ -60,6 +60,65 @@ def compute_downstream_task(ground_truth_data,
         batch_size)
     predictor_model = utils.make_predictor_fn()
 
+    print(mus_train.shape, ys_train.shape)
+    train_err, test_err = _compute_loss(
+        np.transpose(mus_train), ys_train, np.transpose(mus_test),
+        ys_test, predictor_model)
+    size_string = str(train_size)
+    scores[size_string +
+           ":mean_train_accuracy"] = np.mean(train_err)
+    scores[size_string +
+           ":mean_test_accuracy"] = np.mean(test_err)
+    scores[size_string +
+           ":min_train_accuracy"] = np.min(train_err)
+    scores[size_string + ":min_test_accuracy"] = np.min(test_err)
+    for i in range(len(train_err)):
+      scores[size_string +
+             ":train_accuracy_factor_{}".format(i)] = train_err[i]
+      scores[size_string + ":test_accuracy_factor_{}".format(i)] = test_err[i]
+
+  return scores
+
+
+@gin.configurable(
+    "downstream_task_on_representations",
+    blacklist=["ground_truth_data", "representation_function", "random_state",
+               "artifact_dir"])
+def compute_downstream_task_on_representations(ground_truth_train_data,
+                                               ground_truth_test_data,
+                                               representation_function,
+                                               random_state,
+                                               artifact_dir=None,
+                                               num_train=gin.REQUIRED,
+                                               num_test=gin.REQUIRED,
+                                               batch_size=16):
+  """Computes loss of downstream task on representations.
+
+  Args:
+    ground_truth_data: GroundTruthData to be sampled from.
+    representation_function: Function that takes observations as input and
+      outputs a dim_representation sized representation for each observation.
+    random_state: Numpy random state used for randomness.
+    artifact_dir: Optional path to directory where artifacts can be saved.
+    num_train: Number of points used for training.
+    num_test: Number of points used for testing.
+    batch_size: Batch size for sampling.
+
+  Returns:
+    Dictionary with scores.
+  """
+  del artifact_dir
+  scores = {}
+  for train_size in num_train:
+    mus_train, ys_train = utils.generate_batch_label_code(
+        ground_truth_train_data, representation_function, train_size, random_state,
+        batch_size)
+    mus_test, ys_test = utils.generate_batch_label_code(
+        ground_truth_test_data, representation_function, num_test, random_state,
+        batch_size)
+    predictor_model = utils.make_predictor_fn()
+
+    print(mus_train.shape, ys_train.shape)
     train_err, test_err = _compute_loss(
         np.transpose(mus_train), ys_train, np.transpose(mus_test),
         ys_test, predictor_model)
