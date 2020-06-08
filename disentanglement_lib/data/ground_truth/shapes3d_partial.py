@@ -75,6 +75,10 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
   def observation_shape(self):
     return [64, 64, 3]
 
+  @property
+  def representation_observation_shapes(self):
+    return ([10], [64, 64, 3])
+
   def get_data_size(self):
     return self.data_size
 

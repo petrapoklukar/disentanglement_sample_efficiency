@@ -85,6 +85,29 @@ def generate_batch_label_code(ground_truth_data, representation_function,
   return np.transpose(representations), np.transpose(labels)
 
 
+def generate_batch_image_code(ground_truth_data, representation_function,
+                               num_points, random_state, batch_size):
+  """TBA
+  """
+  representations = None
+  images = None
+  i = 0
+  while i < num_points:
+    num_points_iter = min(num_points - i, batch_size)
+    current_observations, current_labels = \
+        ground_truth_data.sample_observations_and_labels(num_points_iter, random_state)
+    if i == 0:
+      images = current_observations
+      representations = representation_function(current_observations)
+    else:
+      images = np.vstack((images, current_observations))
+      representations = np.vstack((representations,
+                                   representation_function(
+                                       current_observations)))
+    i += num_points_iter
+  return np.transpose(representations), np.transpose(images)
+
+
 def split_train_test(observations, train_percentage):
   """Splits observations into a train and test set.
 

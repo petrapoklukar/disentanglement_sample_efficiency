@@ -47,3 +47,8 @@ def make_vae_optimizer(optimizer_fn=gin.REQUIRED, learning_rate=None):
 def make_discriminator_optimizer(optimizer_fn=gin.REQUIRED, learning_rate=None):
   """Wrapper that uses gin to construct an optimizer for the discriminator."""
   return make_optimizer(optimizer_fn, learning_rate)
+
+@gin.configurable("decoder_optimizer")
+def make_decoder_optimizer(optimizer_fn=gin.REQUIRED, learning_rate=None):
+  """Wrapper that uses gin to construct an optimizer for VAEs."""
+  return make_optimizer(optimizer_fn, learning_rate)

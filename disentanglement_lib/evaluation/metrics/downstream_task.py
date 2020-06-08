@@ -82,10 +82,10 @@ def compute_downstream_task(ground_truth_data,
 
 
 @gin.configurable(
-    "downstream_task_on_representations",
+    "downstream_regression_on_representations",
     blacklist=["ground_truth_data", "representation_function", "random_state",
                "artifact_dir"])
-def compute_downstream_task_on_representations(ground_truth_data,
+def compute_downstream_regression_on_representations(ground_truth_data,
                                                representation_function,
                                                random_state,
                                                artifact_dir=None,

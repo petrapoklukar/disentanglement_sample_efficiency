@@ -88,18 +88,18 @@ def main(unused_argv):
     
     
     downstream_train_gin_bindings = [
-        "evaluation.evaluation_fn = @downstream_task_on_representations",
+        "evaluation.evaluation_fn = @downstream_regression_on_representations",
         "dataset.name = '3dshapes_task'",
         "evaluation.random_seed = %d" %(FLAGS.rng),
-        "downstream_task_on_representations.num_train = [127500]",
-        "downstream_task_on_representations.num_test = 22500",
+        "downstream_regression_on_representations.num_train = [127500]",
+        "downstream_regression_on_representations.num_test = 22500",
         "predictor.predictor_fn = @mlp_regressor",
         "mlp_regressor.hidden_layer_sizes = [32, 16]",
         "mlp_regressor.activation = 'logistic'",
         "mlp_regressor.max_iter = 100",
         "mlp_regressor.random_state = 0"
     ]
-    result_path = os.path.join(vae_path, "metrics", "downstream_task")
+    result_path = os.path.join(vae_path, "metrics", "factor_regression")
     evaluate.evaluate_with_gin(
           representation_path, result_path, FLAGS.overwrite, 
           gin_config_files=None, gin_bindings=downstream_train_gin_bindings)
