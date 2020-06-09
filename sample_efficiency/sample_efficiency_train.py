@@ -48,11 +48,11 @@ def main(unused_argv):
         "preprocess.preprocess_fn = @split_train_and_validation",
         "split_train_and_validation.random_seed = %d" %(FLAGS.rng)
   ]
-  preprocess.preprocess_with_gin(FLAGS.dataset,
-                                 FLAGS.model,
-                                 overwrite=FLAGS.overwrite,
-                                 gin_config_files=None,
-                                 gin_bindings=preproces_gin_bindings)
+#  preprocess.preprocess_with_gin(FLAGS.dataset,
+#                                 FLAGS.model,
+#                                 overwrite=FLAGS.overwrite,
+#                                 gin_config_files=None,
+#                                 gin_bindings=preproces_gin_bindings)
   print("\n\n*- Preprocessing DONE \n\n")
   
   if FLAGS.model == "vae":
@@ -73,10 +73,10 @@ def main(unused_argv):
     ]
   vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
   train_vae_path = os.path.join(vae_path, 'model')
-  unsupervised_train_partial.train_with_gin(
-      train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
-  visualize_model.visualize(train_vae_path, vae_path + "/vis", FLAGS.overwrite)
-  preprocess.destroy_train_and_validation_splits(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
+#  unsupervised_train_partial.train_with_gin(
+#      train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
+#  visualize_model.visualize(train_vae_path, vae_path + "/vis", FLAGS.overwrite)
+#  preprocess.destroy_train_and_validation_splits(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
   print("\n\n*- Training DONE \n\n")
 
   print("\n\n*- Postprocessing '%s' \n\n" %(FLAGS.model))
@@ -88,9 +88,9 @@ def main(unused_argv):
 
   representation_path = os.path.join(vae_path, "representation")
   model_path = os.path.join(vae_path, "model")
-  postprocess.postprocess_with_gin(
-      model_path, representation_path, FLAGS.overwrite, gin_config_files=None, 
-      gin_bindings=postprocess_gin_bindings)
+#  postprocess.postprocess_with_gin(
+#      model_path, representation_path, FLAGS.overwrite, gin_config_files=None, 
+#      gin_bindings=postprocess_gin_bindings)
   print("\n\n*- Postprocessing DONE \n\n")
   
   print("\n\n*- Training downstream factor regression '%s' \n\n" %(FLAGS.model))

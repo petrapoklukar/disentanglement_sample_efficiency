@@ -171,7 +171,7 @@ def _compute_mse_loss(x_train, y_train, x_test, y_test, x_holdout, y_holdout,
   test_loss = []
   holdout_loss = []
   random_normal_loss, random_uniform_loss = [], []
-  x_random_normal = np.random.normal(size=x_train.shape)
+  x_random_normal = np.random.normal(size=x_holdout.shape)
   x_random_uniform = np.random.choice(
       np.concatenate([np.random.uniform(low=3, high=5, size=int(x_holdout.size/2)), 
                       np.random.uniform(low=-5, high=-3, size=int(x_holdout.size/2))]), 
