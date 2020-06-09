@@ -72,7 +72,7 @@ def main(unused_argv):
     "model.random_seed = %d" %(FLAGS.rng),
     "dataset.name = '%s'" %(FLAGS.dataset)
     ]
-  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + FLAGS.rng)
+  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + str(FLAGS.rng))
   train_vae_path = os.path.join(vae_path, 'model')
   unsupervised_train_partial.train_with_gin(
       train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
