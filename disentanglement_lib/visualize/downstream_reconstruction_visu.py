@@ -33,20 +33,20 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
 flags.DEFINE_boolean("overwrite", False,
                      "Whether to overwrite output directory.")
+flags.DEFINE_integer("rng", 0, "random seed")
 
 def main(unused_argv):
 
-  datasets = ["3dshapes_model_s1000"]#, "3dshapes_model_s10000", 
-              #"3dshapes_model_s50000", "3dshapes_model_s100000",
-              #"3dshapes_model_s150000", "3dshapes_model_s250000"]
+  datasets = ["3dshapes_model_s1000"]
   base_path = "3dshapes_models"
   
   
   for dataset in datasets:
     print(dataset)
-    path =base_path+"/" + FLAGS.model+dataset
-    path = base_path+"/bvae3dshapes_model_s1000_1602"
-    visualize_model.visualize(path+"/model", path+"/vis", FLAGS.overwrite)
+    path = base_path + "/" + FLAGS.model + dataset + '_' + str(FLAGS.rng)
+    supervised_model_path = path + "/metrics/reconstruction"
+    trained_vae_path = path + "/representation"
+    visualize_model.visualize_supervised(supervised_model_path, trained_vae_path, supervised_model_path + "/vis", FLAGS.overwrite)
 
 
 if __name__ == "__main__":

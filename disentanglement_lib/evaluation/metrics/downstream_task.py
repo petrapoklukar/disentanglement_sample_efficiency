@@ -125,21 +125,28 @@ def compute_downstream_regression_on_representations(ground_truth_data,
     
     predictor_model = utils.make_predictor_fn()
 
-    train_err, test_err, holdout_err = _compute_mse_loss(
+    train_err, test_err, holdout_err, random_normal_err, random_uniform_err = \
+      _compute_mse_loss(
         np.transpose(mus_train), ys_train, np.transpose(mus_test),
         ys_test, np.transpose(mus_holdout), ys_holdout, predictor_model)
     size_string = str(train_size)
     scores[size_string + ":mean_train_mse"] = np.mean(train_err)
     scores[size_string + ":mean_test_mse"] = np.mean(test_err)
     scores[size_string + ":mean_holdout_mse"] = np.mean(holdout_err)
+    scores[size_string + ":mean_random_normal_mse"] = np.mean(random_normal_err)
+    scores[size_string + ":mean_random_uniform_mse"] = np.mean(random_uniform_err)
     scores[size_string + ":min_train_mse"] = np.min(train_err)
     scores[size_string + ":min_test_mse"] = np.min(test_err)
     scores[size_string + ":min_holdout_mse"] = np.min(holdout_err)
+    scores[size_string + ":min_random_normal_mse"] = np.min(random_normal_err)
+    scores[size_string + ":min_random_uniform_mse"] = np.min(random_uniform_err)
     for i in range(len(train_err)):
       scores[size_string +
              ":train_mse_factor_{}".format(i)] = train_err[i]
       scores[size_string + ":test_mse_factor_{}".format(i)] = test_err[i]
       scores[size_string + ":holdout_mse_factor_{}".format(i)] = holdout_err[i]
+      scores[size_string + ":random_normal_mse_factor_{}".format(i)] = random_normal_err[i]
+      scores[size_string + ":random_uniform_mse_factor_{}".format(i)] = random_uniform_err[i]
   return scores
 
 
@@ -163,10 +170,19 @@ def _compute_mse_loss(x_train, y_train, x_test, y_test, x_holdout, y_holdout,
   train_loss = []
   test_loss = []
   holdout_loss = []
+  random_normal_loss, random_uniform_loss = [], []
+  x_random_normal = np.random.normal(size=x_train.shape)
+  x_random_uniform = np.random.choice(
+      np.concatenate([np.random.uniform(low=3, high=5, size=int(x_holdout.size/2)), 
+                      np.random.uniform(low=-5, high=-3, size=int(x_holdout.size/2))]), 
+      size=x_holdout.shape, 
+      replace=False)
   for i in range(num_factors):
     model = predictor_fn()
     model.fit(x_train, y_train[i, :])
     train_loss.append(mean_squared_error(model.predict(x_train), y_train[i, :]))
     test_loss.append(mean_squared_error(model.predict(x_test), y_test[i, :]))
     holdout_loss.append(mean_squared_error(model.predict(x_holdout), y_holdout[i, :]))
-  return train_loss, test_loss, holdout_loss
+    random_normal_loss.append(mean_squared_error(model.predict(x_random_normal), y_holdout[i, :]))
+    random_uniform_loss.append(mean_squared_error(model.predict(x_random_uniform), y_holdout[i, :]))
+  return train_loss, test_loss, holdout_loss, random_normal_loss, random_uniform_loss

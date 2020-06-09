@@ -37,9 +37,11 @@ def tf_data_set_from_ground_truth_data(ground_truth_data, random_seed):
 
 def tf_labeled_data_set_from_ground_truth_data(ground_truth_data, 
                                                representation_function, 
+                                               random_fn,
                                                random_seed):
   """Generate a labeled tf.data.DataSet from ground_truth data."""
-
+  del random_fn
+  
   def generator():
     # We need to hard code the random seed so that the data set can be reset.
     random_state = np.random.RandomState(random_seed)
@@ -47,6 +49,34 @@ def tf_labeled_data_set_from_ground_truth_data(ground_truth_data,
       observation, _ = ground_truth_data.sample_observations_and_labels(1, random_state)
       representation = representation_function(observation)
       yield (representation[0], observation[0])
+
+  return tf.data.Dataset.from_generator(
+      generator, (tf.float32, tf.float32), output_shapes=ground_truth_data.representation_observation_shapes)
+  
+
+def tf_random_labeled_data_set_from_ground_truth_data(ground_truth_data, 
+                                                      representation_function, 
+                                                      random_fn,
+                                                      random_seed):
+  """Generate a labeled tf.data.DataSet from ground_truth data."""
+  def random_uniform(representation_shape):
+    return np.random.choice(
+        np.concatenate([np.random.uniform(low=3, high=5, size=int(representation_shape/2)), 
+                        np.random.uniform(low=-5, high=-3, size=int(representation_shape/2))]), 
+        size=representation_shape, 
+        replace=False)
+  
+  def random_normal(representation_shape):
+    return np.random.normal(size=representation_shape.shape)
+
+  def generator():
+    # We need to hard code the random seed so that the data set can be reset.
+    random_state = np.random.RandomState(random_seed)
+    while True:      
+      observation, _ = ground_truth_data.sample_observations_and_labels(1, random_state)
+      representation_shape = np.prod(representation_function(observation).shape.as_list())
+      random_representation = locals()[random_fn](representation_shape)
+      yield (random_representation[0], observation[0])
 
   return tf.data.Dataset.from_generator(
       generator, (tf.float32, tf.float32), output_shapes=ground_truth_data.representation_observation_shapes)

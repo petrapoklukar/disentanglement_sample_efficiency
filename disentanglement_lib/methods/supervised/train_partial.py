@@ -127,7 +127,8 @@ def train(model_dir,
     # Do the actual training.
     tpu_estimator.train(
         input_fn=_make_downstream_input_fn(dataset_train, _representation_function, 
-                                           random_state.randint(2**32)),
+                                           random_state.randint(2**32), 
+                                           util.tf_labeled_data_set_from_ground_truth_data),
                                            steps=training_steps)
 
     # Save model as a TFHub module.
@@ -145,7 +146,7 @@ def train(model_dir,
     results_dict = tpu_estimator.evaluate(
         input_fn=_make_downstream_input_fn(
             dataset_valid, _representation_function, random_state.randint(2**32),
-            num_batches=eval_steps))
+            util.tf_labeled_data_set_from_ground_truth_data, num_batches=eval_steps))
     results_dir = os.path.join(model_dir, "results")
     results_dict["elapsed_time"] = time.time() - experiment_timer
     results.update_result_directory(results_dir, "evaluate", results_dict)
@@ -153,20 +154,38 @@ def train(model_dir,
     holdout_results_dict = tpu_estimator.evaluate(
         input_fn=_make_downstream_input_fn(
             dataset_holdout, _representation_function, random_state.randint(2**32),
-            num_batches=eval_steps))
-    holdout_results_dir = os.path.join(model_dir, "results")
+            util.tf_labeled_data_set_from_ground_truth_data, num_batches=eval_steps))
     holdout_results_dict["elapsed_time"] = time.time() - experiment_timer
-    results.update_result_directory(holdout_results_dir, "evaluate_holdout", 
+    results.update_result_directory(results_dir, "evaluate_holdout", 
                                     holdout_results_dict)
 
+    random_normal_results_dict = tpu_estimator.evaluate(
+        input_fn=_make_downstream_input_fn(
+            dataset_holdout, _representation_function, random_state.randint(2**32),
+            util.tf_random_labeled_data_set_from_ground_truth_data, 
+            random_fn="random_normal", num_batches=eval_steps))
+    random_normal_results_dict["elapsed_time"] = time.time() - experiment_timer
+    
+    random_uniform_results_dict = tpu_estimator.evaluate(
+        input_fn=_make_downstream_input_fn(
+            dataset_holdout, _representation_function, random_state.randint(2**32),
+            util.tf_random_labeled_data_set_from_ground_truth_data, 
+            random_fn="random_uniform", num_batches=eval_steps))
+    random_uniform_results_dict["elapsed_time"] = time.time() - experiment_timer
+    results.update_result_directory(results_dir, "evaluate_random", 
+                                    {"random_normal": random_normal_results_dict, 
+                                     "random_uniform": random_uniform_results_dict})
 
-def _make_downstream_input_fn(ground_truth_data, representation_fn, seed, num_batches=None):
+
+def _make_downstream_input_fn(ground_truth_data, representation_fn, seed, 
+                              data_set_from_ground_truth_fn, random_fn=None,
+                              num_batches=None):
   """Creates an input function for the experiments."""
 
   def load_dataset(params):
     """TPUEstimator compatible input fuction."""
-    dataset = util.tf_labeled_data_set_from_ground_truth_data(ground_truth_data, 
-                                                      representation_fn, seed)
+    dataset = data_set_from_ground_truth_fn(ground_truth_data, 
+                                            representation_fn, random_fn, seed)
     batch_size = params["batch_size"]
     # We need to drop the remainder as otherwise we lose the batch size in the
     # tensor shape. This has no effect as our data set is infinite.

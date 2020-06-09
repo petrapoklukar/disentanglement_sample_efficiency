@@ -28,6 +28,7 @@ from disentanglement_lib.methods.supervised import train_partial as supervised_t
 from disentanglement_lib.preprocessing import preprocess
 from disentanglement_lib.postprocessing import postprocess
 from disentanglement_lib.evaluation import evaluate
+from disentanglement_lib.visualize import visualize_model
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
@@ -39,10 +40,6 @@ flags.DEFINE_integer("rng", 0,
 
 
 def main(unused_argv):
-
-#  datasets = ["3dshapes_model_s1000", "3dshapes_model_s10000", 
-#              "3dshapes_model_s50000", "3dshapes_model_s100000",
-#              "3dshapes_model_s150000", "3dshapes_model_s250000"]
   base_path = "3dshapes_models"
   
   print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
@@ -78,6 +75,7 @@ def main(unused_argv):
   train_vae_path = os.path.join(vae_path, 'model')
   unsupervised_train_partial.train_with_gin(
       train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
+  visualize_model.visualize(train_vae_path, vae_path + "/vis", FLAGS.overwrite)
   preprocess.destroy_train_and_validation_splits(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
   print("\n\n*- Training DONE \n\n")
 
@@ -141,6 +139,9 @@ def main(unused_argv):
   supervised_train_partial.train_with_gin(
       result_path, representation_path, FLAGS.overwrite,
       gin_bindings=downstream_reconstruction_train_gin_bindings)
+  visualize_model.visualize_supervised(result_path, representation_path, 
+                                       result_path + "/vis", FLAGS.overwrite)
+
   print("\n\n*- Training downstream reconstruction DONE \n\n")
   print("\n\n*- Training & evaluation COMPLETED \n\n")
 
