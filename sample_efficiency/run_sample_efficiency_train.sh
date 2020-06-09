@@ -9,7 +9,7 @@ SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
         "vae"
-#		"bvae"
+		"bvae"
 #		"fvae"
 #		"btcvae"
 #		"annvae"
@@ -24,7 +24,7 @@ declare -a datasetArr=(
 #        "3dshapes_model_s250000"
 		)
 		
-declare -a seedArr=(1602) # 1201 1012)
+declare -a seedArr=(1602 1201)
 
 for seed in "${seedArr[@]}"
 do
