@@ -42,7 +42,7 @@ def main(unused_argv):
 #  datasets = ["3dshapes_model_s1000", "3dshapes_model_s10000", 
 #              "3dshapes_model_s50000", "3dshapes_model_s100000",
 #              "3dshapes_model_s150000", "3dshapes_model_s250000"]
-  base_path = "3d_shape_out"
+  base_path = "TEST_3d_shape_out"
   
   
 #  for dataset in datasets:
@@ -92,8 +92,8 @@ def main(unused_argv):
       "evaluation.evaluation_fn = @downstream_regression_on_representations",
       "dataset.name = '3dshapes_task'",
       "evaluation.random_seed = %d" %(FLAGS.rng),
-      "downstream_regression_on_representations.num_train = [127500]",
-      "downstream_regression_on_representations.num_test = 22500",
+      "downstream_regression_on_representations.num_train = [100]", #[127500]",
+      "downstream_regression_on_representations.num_test = 50", #22500",
       "predictor.predictor_fn = @mlp_regressor",
       "mlp_regressor.hidden_layer_sizes = [32, 16]",
       "mlp_regressor.activation = 'logistic'",
