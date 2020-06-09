@@ -79,7 +79,7 @@ def tf_random_labeled_data_set_from_ground_truth_data(ground_truth_data,
       representation_shape = np.prod(representation_function(observation).shape)
       random_representation = random_fn(representation_shape)
       print(representation_shape, observation.shape, random_representation.shape )
-      yield (random_representation, observation)
+      yield (random_representation, observation[0])
 
   return tf.data.Dataset.from_generator(
       generator, (tf.float32, tf.float32), output_shapes=ground_truth_data.representation_observation_shapes)
