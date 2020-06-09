@@ -33,7 +33,7 @@ from disentanglement_lib.visualize import visualize_model
 FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
 flags.DEFINE_string("dataset", None, "dataset to use")
-flags.DEFINE_boolean("overwrite", True,
+flags.DEFINE_boolean("overwrite", False,
                      "Whether to overwrite output directory.")
 flags.DEFINE_integer("rng", 0,
                      "random seed")
@@ -99,9 +99,9 @@ def main(unused_argv):
       "evaluation.holdout_dataset_name = '3dshapes_holdout'",
       "dataset.name = '3dshapes_task'",
       "evaluation.random_seed = 0",
-      "downstream_regression_on_representations.num_train = [100]", #[127500]",
-      "downstream_regression_on_representations.num_test = 50", #22500",
-      "downstream_regression_on_representations.num_holdout = 50", #80000", 
+      "downstream_regression_on_representations.num_train = [127500]",
+      "downstream_regression_on_representations.num_test = 22500",
+      "downstream_regression_on_representations.num_holdout = 80000", 
       "predictor.predictor_fn = @mlp_regressor",
       "mlp_regressor.hidden_layer_sizes = [16, 8]",
       "mlp_regressor.activation = 'logistic'",
@@ -119,8 +119,8 @@ def main(unused_argv):
   downstream_reconstruction_train_gin_bindings = [
       "supervised_model.model = @downstream_decoder()",
       "supervised_model.batch_size = 64",
-      "supervised_model.training_steps = 1", #30000", 
-      "supervised_model.eval_steps = 1", #1000", 
+      "supervised_model.training_steps = 30000", 
+      "supervised_model.eval_steps = 1000", 
       "supervised_model.random_seed = 0",
       "supervised_model.holdout_dataset_name = '3dshapes_holdout'",
       "dataset.name='3dshapes_task'",
