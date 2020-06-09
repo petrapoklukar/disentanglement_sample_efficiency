@@ -23,8 +23,8 @@ from absl import app
 from absl import flags
 import sys
 sys.path.append('..')
-from disentanglement_lib.methods.unsupervised import unsupervised_train_partial
-from disentanglement_lib.methods.supervised import supervised_train_partial
+from disentanglement_lib.methods.unsupervised import train_partial as unsupervised_train_partial
+from disentanglement_lib.methods.supervised import train_partial as supervised_train_partial
 from disentanglement_lib.preprocessing import preprocess
 from disentanglement_lib.postprocessing import postprocess
 from disentanglement_lib.evaluation import evaluate
