@@ -15,6 +15,7 @@ import time
 from disentanglement_lib.data.ground_truth import named_data
 from disentanglement_lib.data.ground_truth import util
 from disentanglement_lib.methods.supervised import downstream_model
+from disentanglement_lib.methods.supervised import decoder
 from disentanglement_lib.utils import results
 import numpy as np
 import tensorflow as tf
