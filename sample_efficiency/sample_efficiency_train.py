@@ -20,6 +20,7 @@ from __future__ import division
 from __future__ import print_function
 import os
 from absl import app
+import time
 from absl import flags
 import sys
 sys.path.append('..')
@@ -41,19 +42,27 @@ flags.DEFINE_integer("rng", 0,
 
 def main(unused_argv):
   base_path = "3dshapes_models"
-  
-  print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
-  preproces_gin_bindings = [
-        "dataset.name = '%s'" %(FLAGS.dataset),
-        "preprocess.preprocess_fn = @split_train_and_validation",
-        "split_train_and_validation.random_seed = %d" %(FLAGS.rng)
-  ]
-  preprocess.preprocess_with_gin(FLAGS.dataset,
-                                 FLAGS.model,
-                                 overwrite=FLAGS.overwrite,
-                                 gin_config_files=None,
-                                 gin_bindings=preproces_gin_bindings)
-  print("\n\n*- Preprocessing DONE \n\n")
+
+  done = False
+  while not done
+    try:  
+      print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
+      preproces_gin_bindings = [
+            "dataset.name = '%s'" %(FLAGS.dataset),
+            "preprocess.preprocess_fn = @split_train_and_validation",
+            "split_train_and_validation.random_seed = %d" %(FLAGS.rng)
+      ]
+
+      preprocess.preprocess_with_gin(FLAGS.dataset,
+                                     FLAGS.model,
+                                     overwrite=FLAGS.overwrite,
+                                     gin_config_files=None,
+                                     gin_bindings=preproces_gin_bindings)
+      print("\n\n*- Preprocessing DONE \n\n")
+      done = True
+    except:
+      time.sleep(30)
+
   
   if FLAGS.model == "vae":
     gin_file = "3d_shape_vae.gin"
