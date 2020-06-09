@@ -43,7 +43,7 @@ def main(unused_argv):
 #  datasets = ["3dshapes_model_s1000", "3dshapes_model_s10000", 
 #              "3dshapes_model_s50000", "3dshapes_model_s100000",
 #              "3dshapes_model_s150000", "3dshapes_model_s250000"]
-  base_path = "TEST_3d_shape_out"
+  base_path = "3dshapes_models"
   
   
 #  for dataset in datasets:
@@ -71,8 +71,8 @@ def main(unused_argv):
   vae_gin_bindings = [
     "model.random_seed = %d" %(FLAGS.rng),
     "dataset.name = '%s'" %(FLAGS.dataset)
-  ]
-  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset)
+    ]
+  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + FLAGS.rng)
   train_vae_path = os.path.join(vae_path, 'model')
   unsupervised_train_partial.train_with_gin(
       train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
@@ -80,13 +80,14 @@ def main(unused_argv):
   postprocess_gin_bindings = [
       "postprocess.postprocess_fn = @mean_representation",
       "dataset.name='dummy_data'", 
-      "postprocess.random_seed = %d"  %(FLAGS.rng)]
+      "postprocess.random_seed = %d"  %(FLAGS.rng)
+      ]
 
   representation_path = os.path.join(vae_path, "representation")
   model_path = os.path.join(vae_path, "model")
-  postprocess.postprocess_with_gin(model_path, representation_path, 
-                                   FLAGS.overwrite, gin_config_files=None, 
-                                   gin_bindings=postprocess_gin_bindings)
+  postprocess.postprocess_with_gin(
+      model_path, representation_path, FLAGS.overwrite, gin_config_files=None, 
+      gin_bindings=postprocess_gin_bindings)
   
   
   downstream_regression_train_gin_bindings = [
@@ -100,17 +101,18 @@ def main(unused_argv):
       "mlp_regressor.activation = 'logistic'",
       "mlp_regressor.max_iter = 100",
       "mlp_regressor.random_state = 0"
-  ]
+      ]
+  
   result_path = os.path.join(vae_path, "metrics", "factor_regression")
   evaluate.evaluate_with_gin(
-        representation_path, result_path, FLAGS.overwrite, 
-        gin_config_files=None, gin_bindings=downstream_regression_train_gin_bindings)
+      representation_path, result_path, FLAGS.overwrite, 
+      gin_config_files=None, gin_bindings=downstream_regression_train_gin_bindings)
   
   downstream_reconstruction_train_gin_bindings = [
       "supervised_model.model = @downstream_decoder()",
       "supervised_model.batch_size = 64",
       "supervised_model.training_steps = 5", 
-      "supervised_model.random_seed = 0",
+      "supervised_model.random_seed = %d" %(FLAGS.rng),
       "dataset.name='3dshapes_task'",
       "decoder_optimizer.optimizer_fn = @AdamOptimizer",
       "AdamOptimizer.beta1 = 0.9", 
@@ -121,12 +123,13 @@ def main(unused_argv):
       "AdamOptimizer.use_locking = False",
       "decoder.decoder_fn = @deconv_decoder",
       "reconstruction_loss.loss_fn = @l2_loss"
-  ]
+      ]
+  
   result_path = os.path.join(vae_path, "metrics", "reconstruction")
   representation_path = os.path.join(vae_path, "representation")
   supervised_train_partial.train_with_gin(
-    result_path, representation_path, FLAGS.overwrite,
-    gin_bindings=downstream_reconstruction_train_gin_bindings)
+      result_path, representation_path, FLAGS.overwrite,
+      gin_bindings=downstream_reconstruction_train_gin_bindings)
 
 
 if __name__ == "__main__":
