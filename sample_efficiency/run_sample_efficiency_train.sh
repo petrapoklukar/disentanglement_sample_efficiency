@@ -18,6 +18,8 @@ declare -a datasetArr=(
 for model in "${modelArr[@]}"
 do
 
+for dataset in "${datasetArr[@]}"
+do
 
 "${SBATCH_OR_CAT}" << HERE
 #!/usr/bin/env bash
@@ -38,7 +40,9 @@ nvidia-smi
 
 python sample_efficiency_train.py \
         --model=$model
+        --dataset=$dataset
 
 HERE
+done
 done
  
