@@ -8,19 +8,23 @@ AT="@"
 SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
-		"bvae"
-		"fvae"
-		"btcvae"
-		"annvae"
+        "vae"
+#		"bvae"
+#		"fvae"
+#		"btcvae"
+#		"annvae"
 		)
 
 declare -a datasetArr=(
 		"3dshapes_model_s1000"
+#		"3dshapes_model_s10000"
+#        "3dshapes_model_s50000"
+#        "3dshapes_model_s100000"
+#        "3dshapes_model_s150000"
+#        "3dshapes_model_s250000"
 		)
 		
-declare -a seedArr=(
-		1602
-		)
+declare -a seedArr=(1602) # 1201 1012)
 
 for seed in "${seedArr[@]}"
 do
@@ -56,8 +60,7 @@ nvidia-smi
 python sample_efficiency_train.py \
         --model=$model \
         --dataset=$dataset \
-        --rng=$seed \
-
+        --rng=$seed 
 HERE
 done
 done

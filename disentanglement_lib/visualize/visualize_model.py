@@ -208,6 +208,85 @@ def visualize(model_dir,
   gin.clear_config()
 
 
+def visualize_supervised(supervised_model_dir,
+                         trained_vae_model_dir,
+                         output_dir,
+                         overwrite=False):
+  """Takes trained model from model_dir and visualizes it in output_dir.
+
+  Args:
+    model_dir: Path to directory where the trained model is saved.
+    output_dir: Path to output directory.
+    overwrite: Boolean indicating whether to overwrite output directory.
+    num_animations: Integer with number of distinct animations to create.
+    num_frames: Integer with number of frames in each animation.
+    fps: Integer with frame rate for the animation.
+    num_points_irs: Number of points to be used for the IRS plots.
+  """
+  # Fix the random seed for reproducibility.
+  random_state = np.random.RandomState(0)
+
+  # Create the output directory if necessary.
+  if tf.gfile.IsDirectory(output_dir):
+    if overwrite:
+      tf.gfile.DeleteRecursively(output_dir)
+    else:
+      raise ValueError("Directory already exists and overwrite is False.")
+
+  # Automatically set the proper data set if necessary. We replace the active
+  # gin config as this will lead to a valid gin config file where the data set
+  # is present.
+  # Obtain the dataset name from the gin config of the previous step.
+  gin_config_file = os.path.join(supervised_model_dir, "results", "gin", "evaluate.gin")
+  gin_dict = results.gin_dict(gin_config_file)
+  gin.bind_parameter("dataset.name", gin_dict["dataset.name"].replace(
+      "'", ""))
+
+  # Automatically infer the activation function from gin config.
+  activation_str = gin_dict["reconstruction_loss.activation"]
+  if activation_str == "'logits'":
+    activation = sigmoid
+  elif activation_str == "'tanh'":
+    activation = tanh
+  else:
+    raise ValueError(
+        "Activation function  could not be infered from gin config.")
+
+  _, dataset = named_data.get_named_ground_truth_data()
+  num_pics = 64
+  supervised_module_path = os.path.join(supervised_model_dir, "tfhub")
+
+  with hub.eval_function_for_module(supervised_module_path) as f:
+    trained_vae_path = os.path.join(trained_vae_model_dir, "tfhub")
+    with hub.eval_function_for_module(trained_vae_path) as g:
+
+      def _representation_function(x):
+        """Computes representation vector for input images."""
+        output = g(dict(images=x), signature="representation", as_dict=True)
+        return np.array(output["default"])
+
+      # Save reconstructions.
+      real_pics = dataset.sample_observations(num_pics, random_state)
+#      real_pics, _ = dataset.sample_observations_and_labels(num_pics, random_state)
+      representations = _representation_function(real_pics)
+    
+    print(real_pics.shape, representations.shape)
+    decoded_pics = f(
+        dict(representations=representations), signature="reconstructions",
+        as_dict=True)['images']
+    pics = activation(decoded_pics)
+    paired_pics = np.concatenate((real_pics, pics), axis=2)
+    paired_pics = [paired_pics[i, :, :, :] for i in range(paired_pics.shape[0])]
+    results_dir = os.path.join(output_dir, "reconstructions")
+    if not gfile.IsDirectory(results_dir):
+      gfile.MakeDirs(results_dir)
+    visualize_util.grid_save_images(
+        paired_pics, os.path.join(results_dir, "reconstructions.jpg"))
+
+  # Finally, we clear the gin config that we have set.
+  gin.clear_config()
+
+
 def latent_traversal_1d_multi_dim(generator_fn,
                                   latent_vector,
                                   dimensions=None,

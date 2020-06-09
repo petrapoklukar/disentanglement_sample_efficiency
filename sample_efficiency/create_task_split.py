@@ -15,11 +15,12 @@ from disentanglement_lib.preprocessing import preprocess
 
 preproces_task_gin_bindings = [
         "preprocess.preprocess_fn = @split_train_and_validation",
-        "preprocess.random_seed = 0",
+        "split_train_and_validation.random_seed = 0",
         "split_train_and_validation.unit_labels = True"
 ]
 
 preprocess.preprocess_with_gin('3dshapes_task',
+                               '',
                                overwrite=False,
                                gin_config_files=None,
                                gin_bindings=preproces_task_gin_bindings)

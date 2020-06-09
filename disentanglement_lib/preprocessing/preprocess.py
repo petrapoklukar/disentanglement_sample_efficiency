@@ -67,7 +67,7 @@ def preprocess(dataset_name,
   
 
 def destroy_train_and_validation_splits(dataset_name):
-  for split in ['_train', '_test']:
+  for split in ['_train', '_valid']:
     SHAPES3D_PATH = os.path.join(
               os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
               dataset_name + split + ".h5")

@@ -23,6 +23,8 @@ def create_split_train_and_validation(dataset_name,
     Args:   
         filename: name of the file to split further
     """
+    if model_name:
+      model_name = '_{0}_{1}'.format(model_name, str(random_seed))
     random_state = np.random.RandomState(random_seed)
     SHAPES3D_PATH = os.path.join(
             os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
@@ -57,7 +59,7 @@ def create_split_train_and_validation(dataset_name,
         
         SPLIT_SHAPES3D_PATH = os.path.join(
             os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
-            dataset_name + '_' + model_name + '_' + str(random_seed) + split + ".h5")
+            dataset_name + model_name + split + ".h5")
         assert(ims[indices].shape[0] == indices.shape[0])
         assert(labs[indices].shape[0] == indices.shape[0])
         assert(inds[indices].shape[0] == indices.shape[0])
