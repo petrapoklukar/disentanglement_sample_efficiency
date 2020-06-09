@@ -71,7 +71,7 @@ def main(unused_argv):
   print("\n\n*- Training '%s' \n\n" %(FLAGS.model))
   vae_gin_bindings = [
     "model.random_seed = %d" %(FLAGS.rng),
-    "dataset.name = '%s'" %(FLAGS.dataset + str(FLAGS.rng))
+    "dataset.name = '%s'" %(FLAGS.dataset + '_' + str(FLAGS.rng))
     ]
   vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
   train_vae_path = os.path.join(vae_path, 'model')
