@@ -48,7 +48,7 @@ def train_with_gin(model_dir,
   gin.clear_config()
 
 
-@gin.configurable("model", blacklist=["model_dir", "overwrite"])
+@gin.configurable("supervised_model", blacklist=["model_dir", "overwrite"])
 def train(model_dir,
           trained_model_dir,
           overwrite=False,

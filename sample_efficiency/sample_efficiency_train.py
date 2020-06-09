@@ -107,10 +107,10 @@ def main(unused_argv):
         gin_config_files=None, gin_bindings=downstream_regression_train_gin_bindings)
   
   downstream_reconstruction_train_gin_bindings = [
-      "model.model = @downstream_decoder()",
-      "model.batch_size = 64",
-      "model.training_steps = 5", 
-      "model.random_seed = 0",
+      "supervised_model.model = @downstream_decoder()",
+      "supervised_model.batch_size = 64",
+      "supervised_model.training_steps = 5", 
+      "supervised_model.random_seed = 0",
       "dataset.name='3dshapes_task'",
       "decoder_optimizer.optimizer_fn = @AdamOptimizer",
       "AdamOptimizer.beta1 = 0.9", 
