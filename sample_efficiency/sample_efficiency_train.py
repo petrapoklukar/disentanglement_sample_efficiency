@@ -44,7 +44,7 @@ def main(unused_argv):
   base_path = "3dshapes_models"
 
   done = False
-  while not done
+  while not done:
     try:  
       print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
       preproces_gin_bindings = [
