@@ -32,7 +32,7 @@ from disentanglement_lib.evaluation import evaluate
 FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
 flags.DEFINE_string("dataset", None, "dataset to use")
-flags.DEFINE_boolean("overwrite", False,
+flags.DEFINE_boolean("overwrite", True,
                      "Whether to overwrite output directory.")
 flags.DEFINE_integer("rng", 0,
                      "random seed")
