@@ -75,6 +75,10 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
   def observation_shape(self):
     return [64, 64, 3]
 
+  @property
+  def representation_observation_shapes(self):
+    return ([10], [64, 64, 3])
+
   def get_data_size(self):
     return self.data_size
 
@@ -93,7 +97,6 @@ class Shapes3DPartial(ground_truth_data.GroundTruthData):
     else:
       all_factors = self.state_space.sample_all_factors(factors, random_state)
       indices = np.array(np.dot(all_factors, self.factor_bases), dtype=np.int64)
-      #random.randint(0:self.data_size-1)
       return self.images[indices]
 
   def sample_observations(self, num_imgs, random_state):    

@@ -3,3 +3,4 @@
 *.pyc
 __pycache__/
 3d_shape_out/
+datasets/

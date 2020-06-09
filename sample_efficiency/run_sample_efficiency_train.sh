@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SOURCE_PATH="${HOME}/Workspace/disentanglement_sample_efficiency/slurm_logs"
+SOURCE_PATH="${HOME}/Workspace/disentanglement_sample_efficiency/sample_efficiency"
 AT="@"
 
 # Test the job before actually submitting
@@ -8,17 +8,38 @@ AT="@"
 SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
-		"vae"
+		"bvae"
+		"fvae"
+		"btcvae"
+		"annvae"
 		)
+
+declare -a datasetArr=(
+		"3dshapes_model_s1000"
+		)
+		
+declare -a seedArr=(
+		1602
+		)
+
+for seed in "${seedArr[@]}"
+do
+
+for dataset in "${datasetArr[@]}"
+do
 
 for model in "${modelArr[@]}"
 do
 
 
+RUNS_PATH="${SOURCE_PATH}/3dshapes_models/${model}${dataset}_${seed}"
+echo $RUNS_PATH
+mkdir -p $RUNS_PATH
+
 "${SBATCH_OR_CAT}" << HERE
 #!/usr/bin/env bash
-#SBATCH --output="${SOURCE_PATH}/%J_slurm.out"
-#SBATCH --error="${SOURCE_PATH}/%J_slurm.err"
+#SBATCH --output="${RUNS_PATH}/%J_slurm.out"
+#SBATCH --error="${RUNS_PATH}/%J_slurm.err"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user="poklukar${AT}kth.se"
 #SBATCH --constrain="khazadum|rivendell|belegost|shire|gondor"
@@ -33,8 +54,12 @@ conda activate base
 nvidia-smi
 
 python sample_efficiency_train.py \
-        --model=$model
+        --model=$model \
+        --dataset=$dataset \
+        --rng=$seed \
 
 HERE
+done
+done
 done
  

@@ -82,16 +82,18 @@ def compute_downstream_task(ground_truth_data,
 
 
 @gin.configurable(
-    "downstream_task_on_representations",
+    "downstream_regression_on_representations",
     blacklist=["ground_truth_data", "representation_function", "random_state",
                "artifact_dir"])
-def compute_downstream_task_on_representations(ground_truth_data,
-                                               representation_function,
-                                               random_state,
-                                               artifact_dir=None,
-                                               num_train=gin.REQUIRED,
-                                               num_test=gin.REQUIRED,
-                                               batch_size=16):
+def compute_downstream_regression_on_representations(ground_truth_data,
+                                                     ground_truth_holdout_data,
+                                                     representation_function,
+                                                     random_state,
+                                                     artifact_dir=None,
+                                                     num_train=gin.REQUIRED,
+                                                     num_test=gin.REQUIRED,
+                                                     num_holdout=gin.REQUIRED,
+                                                     batch_size=16):
   """Computes loss of downstream task on representations.
 
   Args:
@@ -112,28 +114,32 @@ def compute_downstream_task_on_representations(ground_truth_data,
   scores = {}
   for train_size in num_train:
     mus_train, ys_train = utils.generate_batch_label_code(
-        ground_truth_train_data, representation_function, train_size, random_state,
-        batch_size)
+        ground_truth_train_data, representation_function, train_size, 
+        random_state, batch_size)
     mus_test, ys_test = utils.generate_batch_label_code(
-        ground_truth_test_data, representation_function, num_test, random_state,
-        batch_size)
+        ground_truth_test_data, representation_function, num_test, 
+        random_state, batch_size)
+    mus_holdout, ys_holdout = utils.generate_batch_label_code(
+        ground_truth_holdout_data, representation_function, num_holdout, 
+        random_state, batch_size)
+    
     predictor_model = utils.make_predictor_fn()
 
-    train_err, test_err = _compute_mse_loss(
+    train_err, test_err, holdout_err = _compute_mse_loss(
         np.transpose(mus_train), ys_train, np.transpose(mus_test),
-        ys_test, predictor_model)
+        ys_test, np.transpose(mus_holdout), ys_holdout, predictor_model)
     size_string = str(train_size)
-    scores[size_string +
-           ":mean_train_mse"] = np.mean(train_err)
-    scores[size_string +
-           ":mean_test_mse"] = np.mean(test_err)
-    scores[size_string +
-           ":min_train_mse"] = np.min(train_err)
+    scores[size_string + ":mean_train_mse"] = np.mean(train_err)
+    scores[size_string + ":mean_test_mse"] = np.mean(test_err)
+    scores[size_string + ":mean_holdout_mse"] = np.mean(holdout_err)
+    scores[size_string + ":min_train_mse"] = np.min(train_err)
     scores[size_string + ":min_test_mse"] = np.min(test_err)
+    scores[size_string + ":min_holdout_mse"] = np.min(holdout_err)
     for i in range(len(train_err)):
       scores[size_string +
              ":train_mse_factor_{}".format(i)] = train_err[i]
       scores[size_string + ":test_mse_factor_{}".format(i)] = test_err[i]
+      scores[size_string + ":holdout_mse_factor_{}".format(i)] = holdout_err[i]
   return scores
 
 
@@ -150,14 +156,17 @@ def _compute_loss(x_train, y_train, x_test, y_test, predictor_fn):
   return train_loss, test_loss
 
 
-def _compute_mse_loss(x_train, y_train, x_test, y_test, predictor_fn):
+def _compute_mse_loss(x_train, y_train, x_test, y_test, x_holdout, y_holdout, 
+                      predictor_fn):
   """Compute average accuracy for train and test set."""
   num_factors = y_train.shape[0]
   train_loss = []
   test_loss = []
+  holdout_loss = []
   for i in range(num_factors):
     model = predictor_fn()
     model.fit(x_train, y_train[i, :])
     train_loss.append(mean_squared_error(model.predict(x_train), y_train[i, :]))
     test_loss.append(mean_squared_error(model.predict(x_test), y_test[i, :]))
-  return train_loss, test_loss
+    holdout_loss.append(mean_squared_error(model.predict(x_holdout), y_holdout[i, :]))
+  return train_loss, test_loss, holdout_loss

@@ -64,7 +64,20 @@ def generate_batch_factor_code(ground_truth_data, representation_function,
 
 def generate_batch_label_code(ground_truth_data, representation_function,
                                num_points, random_state, batch_size):
-  """TBA
+  """Sample a single representation and label corresponding to training image
+    based on a mini-batch of ground-truth data.
+
+  Args:
+    ground_truth_data: GroundTruthData to be sampled from.
+    representation_function: Function that takes observation as input and
+      outputs a representation.
+    num_points: Number of points to sample.
+    random_state: Numpy random state used for randomness.
+    batch_size: Batchsize to sample points.
+
+  Returns:
+    representations: Codes (num_codes, num_points)-np array.
+    labels: Factor labels (num_factors, num_points)-np array.
   """
   representations = None
   labels = None
@@ -83,6 +96,42 @@ def generate_batch_label_code(ground_truth_data, representation_function,
                                        current_observations)))
     i += num_points_iter
   return np.transpose(representations), np.transpose(labels)
+
+
+def generate_batch_image_code(ground_truth_data, representation_function,
+                               num_points, random_state, batch_size):
+  """Sample a single representation and corresponding training image
+    based on a mini-batch of ground-truth data.
+
+  Args:
+    ground_truth_data: GroundTruthData to be sampled from.
+    representation_function: Function that takes observation as input and
+      outputs a representation.
+    num_points: Number of points to sample.
+    random_state: Numpy random state used for randomness.
+    batch_size: Batchsize to sample points.
+
+  Returns:
+    representations: Codes (num_codes, num_points)-np array.
+    images: Original images (64, 64, 3, num_points)-np array.
+  """
+  representations = None
+  images = None
+  i = 0
+  while i < num_points:
+    num_points_iter = min(num_points - i, batch_size)
+    current_observations, current_labels = \
+        ground_truth_data.sample_observations_and_labels(num_points_iter, random_state)
+    if i == 0:
+      images = current_observations
+      representations = representation_function(current_observations)
+    else:
+      images = np.vstack((images, current_observations))
+      representations = np.vstack((representations,
+                                   representation_function(
+                                       current_observations)))
+    i += num_points_iter
+  return np.transpose(representations), np.transpose(images)
 
 
 def split_train_test(observations, train_percentage):
@@ -205,6 +254,5 @@ def mlp_regressor(hidden_layer_sizes=gin.REQUIRED,
                   max_iter=gin.REQUIRED,
                   random_state=gin.REQUIRED):
   """Default MLP Regressor."""
-  print(activation, max_iter)
   return MLPRegressor(hidden_layer_sizes=hidden_layer_sizes, activation=activation, 
                       max_iter=max_iter, random_state=random_state)
