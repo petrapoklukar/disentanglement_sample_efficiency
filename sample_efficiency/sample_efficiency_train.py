@@ -119,8 +119,8 @@ def main(unused_argv):
   downstream_reconstruction_train_gin_bindings = [
       "supervised_model.model = @downstream_decoder()",
       "supervised_model.batch_size = 64",
-      "supervised_model.training_steps = 5", #30000", 
-      "supervised_model.eval_steps = 5", #1000", 
+      "supervised_model.training_steps = 1", #30000", 
+      "supervised_model.eval_steps = 1", #1000", 
       "supervised_model.random_seed = 0",
       "supervised_model.holdout_dataset_name = '3dshapes_holdout'",
       "dataset.name='3dshapes_task'",
