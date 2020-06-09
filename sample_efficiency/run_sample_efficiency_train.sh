@@ -8,7 +8,10 @@ AT="@"
 SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
-		"vae"
+		"bvae"
+		"fvae"
+		"btcvae"
+		"annvae"
 		)
 
 declare -a datasetArr=(
