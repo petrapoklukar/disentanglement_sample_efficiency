@@ -4,8 +4,8 @@ SOURCE_PATH="${HOME}/Workspace/disentanglement_sample_efficiency/sample_efficien
 AT="@"
 
 # Test the job before actually submitting
-#SBATCH_OR_CAT=cat
-SBATCH_OR_CAT=sbatch
+SBATCH_OR_CAT=cat
+#SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
 		"bvae"
@@ -22,14 +22,15 @@ declare -a seedArr=(
 		1602
 		)
 
-for model in "${modelArr[@]}"
+for seed in "${seedArr[@]}"
 do
 
 for dataset in "${datasetArr[@]}"
 do
 
-for seed in "${seedArr[@]}"
+for model in "${modelArr[@]}"
 do
+
 
 RUNS_PATH="${SOURCE_PATH}/3dshapes_models/${model}${dataset}_${seed}"
 echo $RUNS_PATH
@@ -55,7 +56,7 @@ nvidia-smi
 python sample_efficiency_train.py \
         --model=$model \
         --dataset=$dataset \
-        --rng=$seed
+        --rng=$seed \
 
 HERE
 done

@@ -12,8 +12,9 @@ import os
 import gin.tf
 
 @gin.configurable("split_train_and_validation", 
-                  blacklist=["dataset_name"])
+                  blacklist=["dataset_name", "model_name"])
 def create_split_train_and_validation(dataset_name, 
+                                      model_name, 
                                       random_seed=gin.REQUIRED, 
                                       unit_labels=False):
     """ Randomly splits the model split into smaller datasets of different
@@ -56,7 +57,7 @@ def create_split_train_and_validation(dataset_name,
         
         SPLIT_SHAPES3D_PATH = os.path.join(
             os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
-            dataset_name + '_' + str(random_seed) + split + ".h5")
+            dataset_name + '_' + model_name + '_' + str(random_seed) + split + ".h5")
         assert(ims[indices].shape[0] == indices.shape[0])
         assert(labs[indices].shape[0] == indices.shape[0])
         assert(inds[indices].shape[0] == indices.shape[0])

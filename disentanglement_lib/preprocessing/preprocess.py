@@ -18,6 +18,7 @@ import gin.tf
 
 
 def preprocess_with_gin(dataset_name,
+                        model_name,
                         overwrite=False,
                         gin_config_files=None,
                         gin_bindings=None):
@@ -39,13 +40,14 @@ def preprocess_with_gin(dataset_name,
   if gin_bindings is None:
     gin_bindings = []
   gin.parse_config_files_and_bindings(gin_config_files, gin_bindings)
-  preprocess(dataset_name, overwrite)
+  preprocess(dataset_name, model_name, overwrite)
   gin.clear_config()
 
 
 @gin.configurable(
-    "preprocess", blacklist=["dataset_name", "overwrite"])
+    "preprocess", blacklist=["dataset_name", "model_name", "overwrite"])
 def preprocess(dataset_name,
+               model_name,
                overwrite=False,
                preprocess_fn=gin.REQUIRED,
                name=""):
@@ -61,7 +63,7 @@ def preprocess(dataset_name,
   # We do not use the variable 'name'. Instead, it can be used to name
   # representations as it will be part of the saved gin config.
   del name
-  preprocess_fn(dataset_name)
+  preprocess_fn(dataset_name, model_name)
   
 
 def destroy_train_and_validation_splits(dataset_name):
