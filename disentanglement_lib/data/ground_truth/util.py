@@ -67,7 +67,7 @@ def tf_random_labeled_data_set_from_ground_truth_data(ground_truth_data,
         replace=False)
   
   def random_normal(representation_shape):
-    return np.random.normal(size=representation_shape.shape)
+    return np.random.normal(size=representation_shape)
 
   def generator():
     # We need to hard code the random seed so that the data set can be reset.
