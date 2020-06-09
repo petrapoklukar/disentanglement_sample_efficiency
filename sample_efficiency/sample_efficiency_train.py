@@ -23,7 +23,8 @@ from absl import app
 from absl import flags
 import sys
 sys.path.append('..')
-from disentanglement_lib.methods.unsupervised import train_partial
+from disentanglement_lib.methods.unsupervised import unsupervised_train_partial
+from disentanglement_lib.methods.supervised import supervised_train_partial
 from disentanglement_lib.preprocessing import preprocess
 from disentanglement_lib.postprocessing import postprocess
 from disentanglement_lib.evaluation import evaluate
@@ -73,7 +74,7 @@ def main(unused_argv):
   ]
   vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset)
   train_vae_path = os.path.join(vae_path, 'model')
-  train_partial.train_with_gin(
+  unsupervised_train_partial.train_with_gin(
       train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
 
   postprocess_gin_bindings = [
@@ -123,7 +124,7 @@ def main(unused_argv):
   ]
   result_path = os.path.join(vae_path, "metrics", "reconstruction")
   representation_path = os.path.join(vae_path, "representation")
-  train_partial.train_with_gin(
+  supervised_train_partial.train_with_gin(
     result_path, representation_path, FLAGS.overwrite,
     gin_bindings=downstream_reconstruction_train_gin_bindings)
 
