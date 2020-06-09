@@ -64,14 +64,15 @@ def preprocess(dataset_name,
   preprocess_fn(dataset_name)
   
 
-def destroy(dataset_name):
-  SHAPES3D_PATH = os.path.join(
-            os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
-            dataset_name + ".h5")
-  if os.path.exists(SHAPES3D_PATH):
-    os.remove(SHAPES3D_PATH)
-    print("File '%s' removed" % SHAPES3D_PATH)
-  else:
-    print("The file '%s' does not exist" % SHAPES3D_PATH)
+def destroy_train_and_validation_splits(dataset_name):
+  for split in ['_train', '_test']:
+    SHAPES3D_PATH = os.path.join(
+              os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
+              dataset_name + split + ".h5")
+    if os.path.exists(SHAPES3D_PATH):
+      os.remove(SHAPES3D_PATH)
+      print("File '%s' removed" % SHAPES3D_PATH)
+    else:
+      print("The file '%s' does not exist" % SHAPES3D_PATH)
   
   

@@ -77,7 +77,7 @@ def main(unused_argv):
   train_vae_path = os.path.join(vae_path, 'model')
   unsupervised_train_partial.train_with_gin(
       train_vae_path, FLAGS.overwrite, [gin_file], vae_gin_bindings)
-  preprocess.destroy(FLAGS.dataset + '_' + str(FLAGS.rng))
+  preprocess.destroy_train_and_validation_splits(FLAGS.dataset + '_' + str(FLAGS.rng))
   print("\n\n*- Training DONE \n\n")
 
   print("\n\n*- Postprocessing '%s' \n\n" %(FLAGS.model))
