@@ -61,7 +61,7 @@ def train(model_dir,
           training_steps=gin.REQUIRED,
           random_seed=gin.REQUIRED,
           batch_size=gin.REQUIRED,
-          eval_steps=1000,
+          eval_steps=gin.REQUIRED,
           name="",
           model_num=None):
   """Trains the estimator and exports the snapshot and the gin config.
@@ -97,7 +97,7 @@ def train(model_dir,
   random_state = np.random.RandomState(random_seed)
 
   # Obtain the dataset.
-  dataset_train, dataset_vali = named_data.get_named_ground_truth_data()
+  dataset_train, dataset_valid = named_data.get_named_ground_truth_data()
 
   # We create a TPUEstimator based on the provided model. This is primarily so
   # that we could switch to TPU training in the future. For now, we train
@@ -134,7 +134,7 @@ def train(model_dir,
   # these files will be available for analysis at the end.
   results_dict = tpu_estimator.evaluate(
       input_fn=_make_input_fn(
-          dataset_vali, random_state.randint(2**32), num_batches=eval_steps))
+          dataset_valid, random_state.randint(2**32), num_batches=eval_steps))
   results_dir = os.path.join(model_dir, "results")
   results_dict["elapsed_time"] = time.time() - experiment_timer
   results.update_result_directory(results_dir, "train", results_dict)

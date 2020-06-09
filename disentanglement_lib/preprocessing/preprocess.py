@@ -48,21 +48,18 @@ def preprocess_with_gin(dataset_name,
 def preprocess(dataset_name,
                overwrite=False,
                preprocess_fn=gin.REQUIRED,
-               random_seed=gin.REQUIRED,
                name=""):
-  """Loads a trained Gaussian encoder and extracts representation.
+  """Preprocesses the original images.
 
   Args:
     dataset_name: String with dataset name to split into train and validation.
     overwrite: Boolean indicating whether to overwrite output directory.
     preprocess_fn: Function used to split the dataset.
-    random_seed: Integer with random seed used for postprocessing (may be
-      unused).
     name: Optional string with name of the representation (can be used to name
       representations).
   """
   # We do not use the variable 'name'. Instead, it can be used to name
   # representations as it will be part of the saved gin config.
   del name
-  preprocess_fn(dataset_name, np.random.RandomState(random_seed))
+  preprocess_fn(dataset_name)
   

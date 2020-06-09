@@ -57,7 +57,8 @@ def train(model_dir,
           training_steps=gin.REQUIRED,
           random_seed=gin.REQUIRED,
           batch_size=gin.REQUIRED,
-          eval_steps=1, #1000,
+          holdout_dataset_name=gin.REQUIRED,
+          eval_steps=gin.REQUIRED,
           name="",
           model_num=None):
   """Trains the estimator and exports the snapshot and the gin config.
@@ -88,8 +89,9 @@ def train(model_dir,
     else:
       raise ValueError("Directory already exists and overwrite is False.")
 
-  # Obtain the dataset.
+  # Obtain the datasets.
   dataset_train, dataset_valid = named_data.get_named_ground_truth_data()
+  dataset_holdout = named_data.get_named_ground_truth_data(holdout_dataset_name)
 
   # Create a numpy random state. We will sample the random seeds for training
   # and evaluation from this.
@@ -147,6 +149,15 @@ def train(model_dir,
     results_dir = os.path.join(model_dir, "results")
     results_dict["elapsed_time"] = time.time() - experiment_timer
     results.update_result_directory(results_dir, "evaluate", results_dict)
+    
+    holdout_results_dict = tpu_estimator.evaluate(
+        input_fn=_make_downstream_input_fn(
+            dataset_holdout, _representation_function, random_state.randint(2**32),
+            num_batches=eval_steps))
+    holdout_results_dir = os.path.join(model_dir, "results")
+    holdout_results_dict["elapsed_time"] = time.time() - experiment_timer
+    results.update_result_directory(holdout_results_dir, "evaluate_holdout", 
+                                    holdout_results_dict)
 
 
 def _make_downstream_input_fn(ground_truth_data, representation_fn, seed, num_batches=None):

@@ -1,0 +1,13 @@
+# Parameters for dataset:
+# ==============================================================================
+dataset.name = 'dummy_data'
+
+# Parameters for mean_representation:
+# ==============================================================================
+# None.
+
+# Parameters for postprocess:
+# ==============================================================================
+postprocess.name = ''
+postprocess.postprocess_fn = @mean_representation
+postprocess.random_seed = 1602

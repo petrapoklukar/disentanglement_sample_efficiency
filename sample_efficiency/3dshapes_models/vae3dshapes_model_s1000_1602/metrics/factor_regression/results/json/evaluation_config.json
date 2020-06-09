@@ -1,0 +1,14 @@
+{
+  "dataset.name": "'3dshapes_task'",
+  "downstream_regression_on_representations.batch_size": "16",
+  "downstream_regression_on_representations.num_test": "50",
+  "downstream_regression_on_representations.num_train": "[100]",
+  "evaluation.evaluation_fn": "@downstream_regression_on_representations",
+  "evaluation.name": "''",
+  "evaluation.random_seed": "1602",
+  "mlp_regressor.activation": "'logistic'",
+  "mlp_regressor.hidden_layer_sizes": "[32, 16]",
+  "mlp_regressor.max_iter": "100",
+  "mlp_regressor.random_state": "0",
+  "predictor.predictor_fn": "@mlp_regressor"
+}
