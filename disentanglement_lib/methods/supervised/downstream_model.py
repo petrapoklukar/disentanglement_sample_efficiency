@@ -23,7 +23,7 @@ class DownstreamModel(object):
     """TPUEstimator compatible model function used for training/evaluation."""
     raise NotImplementedError()
 
-  def foward_pass(self, input_tensor, is_training):
+  def forward_pass(self, input_tensor, observation_shape, is_training):
     """Applies the Gaussian encoder to images.
 
     Args:
@@ -39,6 +39,7 @@ class DownstreamModel(object):
 @gin.configurable("export_as_tf_hub", whitelist=[])
 def export_as_tf_hub(downstream_model,
                      representation_shape,
+                     observation_shape,
                      checkpoint_path,
                      export_path,
                      drop_collections=None):
@@ -59,7 +60,7 @@ def export_as_tf_hub(downstream_model,
       representation_placeholder = tf.placeholder(
           dtype=tf.float32, shape=[None] + representation_shape)
       reconstructed_images = downstream_model.forward_pass(
-          representation_placeholder, is_training)
+          representation_placeholder, observation_shape, is_training)
       hub.add_signature(
           name="reconstructions",
           inputs={"representations": representation_placeholder},

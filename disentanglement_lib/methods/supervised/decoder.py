@@ -32,13 +32,13 @@ class Decoder(downstream_model.DownstreamModel):
   def model_fn(self, features, labels, mode, params):
     """TPUEstimator compatible model function."""
     is_training = (mode == tf.estimator.ModeKeys.TRAIN)
-    output_shape = labels.get_shape().as_list()[1:]
-    reconstructions = self.foward_pass(features, output_shape, is_training=is_training)
+    output_shape = labels.get_shape().as_list()[1:] # labels are true images in this case
+    reconstructions = self.forward_pass(features, output_shape, is_training=is_training)
     per_sample_loss = losses.make_reconstruction_loss(labels, reconstructions)
     reconstruction_loss = tf.reduce_mean(per_sample_loss)
     
     if mode == tf.estimator.ModeKeys.TRAIN:
-      optimizer = optimizers.make_vae_optimizer()
+      optimizer = optimizers.make_decoder_optimizer()
       update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
       train_op = optimizer.minimize(
           loss=reconstruction_loss, global_step=tf.train.get_global_step())
@@ -63,7 +63,7 @@ class Decoder(downstream_model.DownstreamModel):
     else:
       raise NotImplementedError("Eval mode not supported.")
 
-  def foward_pass(self, latent_tensor, observation_shape, is_training):
+  def forward_pass(self, latent_tensor, observation_shape, is_training):
     """Decodes the latent_tensor to an observation."""
     return architectures.make_decoder(
         latent_tensor, observation_shape, is_training=is_training)

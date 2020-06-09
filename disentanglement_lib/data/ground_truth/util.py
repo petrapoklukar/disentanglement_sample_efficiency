@@ -46,10 +46,10 @@ def tf_labeled_data_set_from_ground_truth_data(ground_truth_data,
     while True:      
       observation, _ = ground_truth_data.sample_observations_and_labels(1, random_state)
       representation = representation_function(observation)
-      yield representation, observation
+      yield (representation[0], observation[0])
 
   return tf.data.Dataset.from_generator(
-      generator, tf.float32)# output_shapes=ground_truth_data.representation_observation_shapes)
+      generator, (tf.float32, tf.float32), output_shapes=ground_truth_data.representation_observation_shapes)
 
 
 class SplitDiscreteStateSpace(object):

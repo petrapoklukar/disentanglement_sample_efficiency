@@ -11,6 +11,10 @@ declare -a modelArr=(
 		"vae"
 		)
 
+declare -a datasetArr=(
+		"3dshapes_model_s1000"
+		)
+
 for model in "${modelArr[@]}"
 do
 
