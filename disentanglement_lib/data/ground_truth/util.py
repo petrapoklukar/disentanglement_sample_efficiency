@@ -56,7 +56,7 @@ def tf_labeled_data_set_from_ground_truth_data(ground_truth_data,
 
 def tf_random_labeled_data_set_from_ground_truth_data(ground_truth_data, 
                                                       representation_function, 
-                                                      random_fn,
+                                                      random_fn_name,
                                                       random_seed):
   """Generate a labeled tf.data.DataSet from ground_truth data."""
   def random_uniform(representation_shape):
@@ -69,15 +69,15 @@ def tf_random_labeled_data_set_from_ground_truth_data(ground_truth_data,
   def random_normal(representation_shape):
     return np.random.normal(size=representation_shape)
 
+  random_fn = locals()[random_fn_name]
+  
   def generator():
     # We need to hard code the random seed so that the data set can be reset.
     random_state = np.random.RandomState(random_seed)
     while True:      
       observation, _ = ground_truth_data.sample_observations_and_labels(1, random_state)
-      print(representation_function(observation))
-      print(representation_function(observation).shape)
       representation_shape = np.prod(representation_function(observation).shape)
-      random_representation = locals()[random_fn](representation_shape)
+      random_representation = random_fn(representation_shape)
       yield (random_representation[0], observation[0])
 
   return tf.data.Dataset.from_generator(

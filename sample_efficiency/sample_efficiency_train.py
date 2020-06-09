@@ -110,9 +110,9 @@ def main(unused_argv):
       ]
   
   result_path = os.path.join(vae_path, "metrics", "factor_regression")
-  evaluate.evaluate_with_gin(
-      representation_path, result_path, FLAGS.overwrite, 
-      gin_config_files=None, gin_bindings=downstream_regression_train_gin_bindings)
+#  evaluate.evaluate_with_gin(
+#      representation_path, result_path, FLAGS.overwrite, 
+#      gin_config_files=None, gin_bindings=downstream_regression_train_gin_bindings)
   print("\n\n*- Training downstream factor regression DONE \n\n")
   
   print("\n\n*- Training downstream reconstruction '%s' \n\n" %(FLAGS.model))
