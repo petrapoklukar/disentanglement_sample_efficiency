@@ -1,6 +1,0 @@
-{
-  "dataset.name": "'dummy_data'",
-  "postprocess.name": "''",
-  "postprocess.postprocess_fn": "@mean_representation",
-  "postprocess.random_seed": "1602"
-}
