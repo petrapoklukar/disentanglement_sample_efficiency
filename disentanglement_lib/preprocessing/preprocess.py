@@ -13,7 +13,7 @@ from __future__ import division
 from __future__ import print_function
 from disentanglement_lib.preprocessing import methods
 import numpy as np
-
+import os
 import gin.tf
 
 
@@ -62,4 +62,16 @@ def preprocess(dataset_name,
   # representations as it will be part of the saved gin config.
   del name
   preprocess_fn(dataset_name)
+  
+
+def destroy(dataset_name):
+  SHAPES3D_PATH = os.path.join(
+            os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
+            dataset_name + ".h5")
+  if os.path.exists(SHAPES3D_PATH):
+    os.remove(SHAPES3D_PATH)
+    print("File '%s' removed" % SHAPES3D_PATH)
+  else:
+    print("The file '%s' does not exist" % SHAPES3D_PATH)
+  
   
