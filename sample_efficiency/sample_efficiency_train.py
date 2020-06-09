@@ -51,10 +51,10 @@ def main(unused_argv):
         "preprocess.preprocess_fn = @split_train_and_validation",
         "split_train_and_validation.random_seed = %d" %(FLAGS.rng)
   ]
-  preprocess.preprocess_with_gin(FLAGS.dataset,
-                                 overwrite=FLAGS.overwrite,
-                                 gin_config_files=None,
-                                 gin_bindings=preproces_gin_bindings)
+#  preprocess.preprocess_with_gin(FLAGS.dataset,
+#                                 overwrite=FLAGS.overwrite,
+#                                 gin_config_files=None,
+#                                 gin_bindings=preproces_gin_bindings)
   print("\n\n*- Preprocessing DONE \n\n")
   
   if FLAGS.model == "vae":
@@ -96,7 +96,7 @@ def main(unused_argv):
   print("\n\n*- Training downstream factor regression '%s' \n\n" %(FLAGS.model))
   downstream_regression_train_gin_bindings = [
       "evaluation.evaluation_fn = @downstream_regression_on_representations",
-      "evaluation.holdout_dataset_name = 3dshapes_holdout",
+      "evaluation.holdout_dataset_name = '3dshapes_holdout'",
       "dataset.name = '3dshapes_task'",
       "evaluation.random_seed = 0",
       "downstream_regression_on_representations.num_train = [100]", #[127500]",
@@ -122,7 +122,7 @@ def main(unused_argv):
       "supervised_model.training_steps = 5", #30000", 
       "supervised_model.eval_steps = 5", #1000", 
       "supervised_model.random_seed = 0",
-      "supervised_model.holdout_dataset_name = 3dshapes_holdout",
+      "supervised_model.holdout_dataset_name = '3dshapes_holdout'",
       "dataset.name='3dshapes_task'",
       "decoder_optimizer.optimizer_fn = @AdamOptimizer",
       "AdamOptimizer.beta1 = 0.9", 
