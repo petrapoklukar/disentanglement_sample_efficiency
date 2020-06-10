@@ -34,7 +34,7 @@ from disentanglement_lib.visualize import visualize_model
 FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
 flags.DEFINE_string("dataset", None, "dataset to use")
-flags.DEFINE_boolean("overwrite", True,
+flags.DEFINE_boolean("overwrite", False,
                      "Whether to overwrite output directory.")
 flags.DEFINE_integer("rng", 0,
                      "random seed")
