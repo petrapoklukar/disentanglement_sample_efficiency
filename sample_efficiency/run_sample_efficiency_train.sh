@@ -4,8 +4,8 @@ SOURCE_PATH="${HOME}/Workspace/disentanglement_sample_efficiency/sample_efficien
 AT="@"
 
 # Test the job before actually submitting
-SBATCH_OR_CAT=cat
-#SBATCH_OR_CAT=sbatch
+# SBATCH_OR_CAT=cat
+SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
 	"vae"
