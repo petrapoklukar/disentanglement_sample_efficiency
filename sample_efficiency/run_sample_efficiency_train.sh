@@ -4,8 +4,8 @@ SOURCE_PATH="${HOME}/Workspace/disentanglement_sample_efficiency/sample_efficien
 AT="@"
 
 # Test the job before actually submitting
-#SBATCH_OR_CAT=cat
-SBATCH_OR_CAT=sbatch
+SBATCH_OR_CAT=cat
+#SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
 	"vae"
@@ -46,7 +46,7 @@ mkdir -p $RUNS_PATH
 #SBATCH --error="${RUNS_PATH}/%J_slurm.err"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user="poklukar${AT}kth.se"
-#SBATCH --constrain="khazadum|rivendell|belegost|shire|gondor"
+#SBATCH --constrain="gondor"
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=50GB
