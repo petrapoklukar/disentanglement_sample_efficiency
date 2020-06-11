@@ -4,27 +4,27 @@ SOURCE_PATH="${HOME}/Workspace/disentanglement_sample_efficiency/sample_efficien
 AT="@"
 
 # Test the job before actually submitting
-#SBATCH_OR_CAT=cat
+# SBATCH_OR_CAT=cat
 SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
-        "vae"
-#		"bvae"
-#		"fvae"
-#		"btcvae"
-#		"annvae"
-		)
+	"vae"
+	"bvae"
+	"fvae"
+	"btcvae"
+	"annvae"
+)
 
 declare -a datasetArr=(
-		"3dshapes_model_s1000"
-#		"3dshapes_model_s10000"
-#        "3dshapes_model_s50000"
-#        "3dshapes_model_s100000"
-#        "3dshapes_model_s150000"
-#        "3dshapes_model_s250000"
-		)
+	"3dshapes_model_s1000"
+##	"3dshapes_model_s10000"
+	"3dshapes_model_s50000"
+	"3dshapes_model_s100000"
+	"3dshapes_model_s150000"
+##	"3dshapes_model_s250000"
+	)
 		
-declare -a seedArr=(1602) # 1201 1012)
+declare -a seedArr=(1602 1201 1012)
 
 for seed in "${seedArr[@]}"
 do
@@ -46,7 +46,7 @@ mkdir -p $RUNS_PATH
 #SBATCH --error="${RUNS_PATH}/%J_slurm.err"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user="poklukar${AT}kth.se"
-#SBATCH --constrain="khazadum|rivendell|belegost|shire|gondor"
+#SBATCH --constrain="belegost|rivendell"
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=50GB
