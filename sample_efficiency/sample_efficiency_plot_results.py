@@ -62,6 +62,9 @@ def main(unused_argv):
   #reconstructions tasks
   pattern = os.path.join(base_path,"*/metrics/reconstruction/results/json/evaluate_holdout_results.json")
   patterns.append(pattern)
+  #train performance 
+  pattern = os.path.join(base_path,"*/model/results/json/train_results.json")
+  patterns.append(pattern)
   
   task_id=0
   for pattern in patterns:
@@ -79,9 +82,12 @@ def main(unused_argv):
 	    dataset_name=name.split('_')[2]
 	    rng_name=name.split('_')[3]
 	    if task_id==0:
+	    	#performance=all_data.loc[i,'100:mean_holdout_mse']
 	    	performance=all_data.loc[i,'127500:mean_holdout_mse']
 	    if task_id==1:
 	    	performance=all_data.loc[i,'reconstruction_loss']
+	    if task_id==2:
+	    	performance=all_data.loc[i,'loss']
 	    regression_results.append((model_name,dataset_name,rng_name,float(performance)))
 	    model_names.append(model_name)
 	    dataset_names.append(dataset_name)
@@ -118,8 +124,14 @@ def main(unused_argv):
 	  plt.legend(loc="lower left")
 	  if task_id==0:
 	  	plt.ylabel('Mean Squared Error')
+	  	plt.title('regression downstreamtasks')
 	  if task_id==1:
 	  	plt.ylabel('L2 loss')
+	  	plt.title('reconstruction downstreamtasks')
+	  if task_id==2:
+	  	plt.ylabel('Loss')
+	  	plt.title('training performance')
+
 
 	  plt.xticks(x, dataset_names, size='small',rotation='vertical')
 	  plt.xlabel('Datasets')
@@ -130,6 +142,8 @@ def main(unused_argv):
 	  	file = open("regression_results_latex_table.txt","w") 
 	  if task_id==1:
 	  	file = open("reconstruction_results_latex_table.txt","w") 
+	  if task_id==2:
+	  	file = open("training_results_latex_table.txt","w") 
 	  file.write("Model &") 
 	  for dataset_name in dataset_names:
 	      file.write(str(dataset_name)) 
@@ -143,6 +157,7 @@ def main(unused_argv):
 	    for py,pstd in zip(y,std):
 	      file.write("$" + str(np.round(py,2))+" \\pm " + str(np.round(pstd,2))+"$ & ")
 	    file.write("\n")
+	  file.close()
 
 	  task_id+=1
 
