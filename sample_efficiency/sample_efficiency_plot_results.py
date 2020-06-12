@@ -79,7 +79,7 @@ def main(unused_argv):
 	    dataset_name=name.split('_')[2]
 	    rng_name=name.split('_')[3]
 	    if task_id==0:
-	    	performance=all_data.loc[i,'100:mean_holdout_mse']
+	    	performance=all_data.loc[i,'127500:mean_holdout_mse']
 	    if task_id==1:
 	    	performance=all_data.loc[i,'reconstruction_loss']
 	    regression_results.append((model_name,dataset_name,rng_name,float(performance)))
