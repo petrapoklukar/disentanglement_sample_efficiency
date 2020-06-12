@@ -87,9 +87,9 @@ def main(unused_argv):
 	    dataset_names.append(dataset_name)
 
 	  #get all unique model names and datasets
-	  model_names = set(model_names)
-	  dataset_names = set(dataset_names)
-
+	  model_names = sorted(set(model_names))
+	  dataset_names = sorted(set(dataset_names))
+      
 	  print("Found " + str(len(model_names))+ " models and " + str(len(dataset_names))+ " datasets")
 
 	  #agregate the results
