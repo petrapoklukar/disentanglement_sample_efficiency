@@ -68,6 +68,8 @@ def main(unused_argv):
     gin_file = "3d_shape_vae.gin"
   if FLAGS.model == "bvae":
     gin_file = "3d_shape_bvae.gin"
+  if FLAGS.model == "b8vae":
+    gin_file = "3d_shape_b8vae.gin"
   if FLAGS.model == "fvae":
     gin_file = "3d_shape_fvae.gin"
   if FLAGS.model == "btcvae":
