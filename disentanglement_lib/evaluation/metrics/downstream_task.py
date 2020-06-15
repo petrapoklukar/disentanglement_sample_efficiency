@@ -22,6 +22,7 @@ import numpy as np
 from six.moves import range
 import gin.tf
 from sklearn.metrics import mean_squared_error
+from disentanglement_lib.data.ground_truth import named_data
 
 
 @gin.configurable(
@@ -86,9 +87,9 @@ def compute_downstream_task(ground_truth_data,
     blacklist=["ground_truth_data", "representation_function", "random_state",
                "artifact_dir"])
 def compute_downstream_regression_on_representations(ground_truth_data,
-                                                     ground_truth_holdout_data,
                                                      representation_function,
                                                      random_state,
+                                                     holdout_dataset_name=gin.REQUIRED,
                                                      artifact_dir=None,
                                                      num_train=gin.REQUIRED,
                                                      num_test=gin.REQUIRED,
@@ -111,6 +112,7 @@ def compute_downstream_regression_on_representations(ground_truth_data,
   """
   del artifact_dir
   ground_truth_train_data, ground_truth_test_data = ground_truth_data
+  ground_truth_holdout_data = named_data.get_named_ground_truth_data(holdout_dataset_name)
   scores = {}
   for train_size in num_train:
     mus_train, ys_train = utils.generate_batch_label_code(

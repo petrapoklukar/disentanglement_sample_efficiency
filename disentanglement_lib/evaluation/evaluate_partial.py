@@ -70,12 +70,13 @@ def evaluate_with_gin(model_dir,
 
 
 @gin.configurable(
-    "evaluation", blacklist=["model_dir", "output_dir", "overwrite"])
+    "evaluation_partial", blacklist=["model_dir", "output_dir", "overwrite"])
 def evaluate(model_dir,
              output_dir,
              overwrite=False,
              evaluation_fn=gin.REQUIRED,
              random_seed=gin.REQUIRED,
+             holdout_dataset_name=gin.REQUIRED,
              name=""):
   """Loads a representation TFHub module and computes disentanglement metrics.
 
@@ -115,6 +116,7 @@ def evaluate(model_dir,
       gin.bind_parameter("dataset.name", gin_dict["dataset.name"].replace(
           "'", ""))
   dataset = named_data.get_named_ground_truth_data()
+  holdout_dataset = named_data.get_named_ground_truth_data(holdout_dataset_name)
 
   # Path to TFHub module of previously trained representation.
   module_path = os.path.join(model_dir, "tfhub")
@@ -130,6 +132,7 @@ def evaluate(model_dir,
       artifact_dir = os.path.join(model_dir, "artifacts")
       results_dict = evaluation_fn(
           dataset,
+          holdout_dataset, 
           _representation_function,
           random_state=np.random.RandomState(random_seed),
           artifact_dir=artifact_dir)
@@ -141,6 +144,7 @@ def evaluate(model_dir,
           "future versions.", DeprecationWarning)
       results_dict = evaluation_fn(
           dataset,
+          holdout_dataset,
           _representation_function,
           random_state=np.random.RandomState(random_seed))
 

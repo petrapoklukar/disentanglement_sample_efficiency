@@ -107,9 +107,9 @@ def main(unused_argv):
   print("\n\n*- Training downstream factor regression '%s' \n\n" %(FLAGS.model))
   downstream_regression_train_gin_bindings = [
       "evaluation.evaluation_fn = @downstream_regression_on_representations",
-      "evaluation.holdout_dataset_name = '3dshapes_holdout'",
       "dataset.name = '3dshapes_task'",
       "evaluation.random_seed = 0",
+      "downstream_regression_on_representations.holdout_dataset_name = '3dshapes_holdout'",
       "downstream_regression_on_representations.num_train = [127500]",
       "downstream_regression_on_representations.num_test = 22500",
       "downstream_regression_on_representations.num_holdout = 80000", 
