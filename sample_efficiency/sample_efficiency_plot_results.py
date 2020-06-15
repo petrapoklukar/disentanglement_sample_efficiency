@@ -179,9 +179,116 @@ def main(unused_argv):
       task_id+=1
 
 
+def get_model_data(task_id, pattern):
+  """
+  0 - regression holdout
+  1 - reconstruction holdout
+  2 - training performance
+  """
+  all_data=_get(pattern)
+  print(list(all_data.columns.values))
+  regression_results=[]
+  model_names=[]
+  dataset_names=[]
+  print(all_data)
+  for i in range(all_data.shape[0]):
+    #extract relevant information from json
+    name=all_data.loc[i,'path'].split('/')[1]
+    model_name=name.split('_')[0]
+    dataset_name=name.split('_')[2]
+    rng_name=name.split('_')[3]
+    if task_id==0:
+    	#performance=all_data.loc[i,'100:mean_holdout_mse']
+    	performance=all_data.loc[i,'127500:mean_holdout_mse']
+    if task_id==1:
+    	performance=all_data.loc[i,'reconstruction_loss']
+    if task_id==2:
+    	performance=all_data.loc[i,'loss']
+    regression_results.append((model_name,dataset_name,rng_name,float(performance)))
+    model_names.append(model_name)
+    dataset_names.append(dataset_name)
+  return regression_results, model_names, dataset_names
 
-  
+def plot_model_results(unused_argv):
+	base_path = FLAGS.base_path
+	patterns=[]
+
+	#regression tasks
+	pattern = os.path.join(base_path,"*/metrics/factor_regression/results/json/evaluation_results.json")
+	print(pattern)
+	patterns.append(pattern)
+	#reconstructions tasks
+	pattern = os.path.join(base_path,"*/metrics/reconstruction/results/json/evaluate_holdout_results.json")
+	patterns.append(pattern)
+	#train performance 
+	pattern = os.path.join(base_path,"*/model/results/json/train_results.json")
+	patterns.append(pattern)
+
+	task_id=0
+	for pattern, task_id in zip(patterns,[0, 1, 2]):
+
+		regression_results, model_names, dataset_names = get_model_data(
+			task_id, pattern)
+
+		#get all unique model names and datasets
+		model_names = sorted(set(model_names))
+		dataset_names = sorted(set(dataset_names))
+
+		print("Found " + str(len(model_names))+ " models and " + str(len(dataset_names))+ " datasets")
+
+		#agregate the results
+		plot_lst=[]
+		for name in model_names:
+			values=[]
+			for dataset in dataset_names:
+				t_mse=[]
+				for regression_result in regression_results:
+					if regression_result[0]==name and regression_result[1] ==dataset:
+						t_mse.append(regression_result[3])
+				t_mean_mse=np.mean(t_mse)
+				t_mean_std=np.std(t_mse)
+				values.append((dataset,t_mean_mse,t_mean_std, np.array(t_mse)))
+			plot_lst.append((name,values))
+
+		#plot the results
+		plt.figure(0, figsize=(10, 5))
+		for plot in range(len(plot_lst)):
+			plt.subplot(2, 3, plot + 1)
+			x=np.arange(start=0, stop=len(dataset_names), step=1)
+			v=np.array(plot_lst[plot][1])
+			y=v[:,1].astype('float')
+			e=v[:,2].astype('float')
+			plt.errorbar(x, y, e,  capsize=3, color='lightskyblue')
+			plt.scatter(x.repeat(3), np.concatenate(v[:,3]).astype('float'))
+			plt.title(plot_lst[plot][0])
+			plt.xticks([], [])
+			if plot >= 3:
+				plt.xticks(x, dataset_names, size='small',rotation='vertical')
+				plt.xlabel('Datasets')
+
+			if task_id==0:
+				if plot in [0, 3]:
+					plt.ylabel('Mean Squared Error')
+				name = 'models_regression_downstreamtasks.png'
+				plt.suptitle('regression downstreamtasks')
+			if task_id==1:
+				if plot in [0, 3]:
+					plt.ylabel('L2 loss')
+				name = 'models_reconstruction_downstreamtasks.png'
+				plt.suptitle('reconstruction downstreamtasks')
+			if task_id==2:
+				if plot in [0, 3]:
+					plt.ylabel('Loss')
+				name = 'models_training.png'
+				plt.suptitle('training performance')
+		plt.subplots_adjust(wspace=0.5, hspace=0.5)
+		plt.savefig(name)
+		plt.clf()
+		plt.close()
+
+
 
 
 if __name__ == "__main__":
-  app.run(main)
+  #app.run(main)
+  app.run(plot_model_results)
