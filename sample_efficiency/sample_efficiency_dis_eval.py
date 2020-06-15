@@ -40,7 +40,7 @@ def main(unused_argv):
      "evaluation.evaluation_fn = @mig",
      "dataset.name='3dshapes'",
      "evaluation.random_seed = 0",
-     "mig.num_train = 10000",
+     "mig.num_train = 10", #10000",
      "discretizer.discretizer_fn = @histogram_discretizer",
      "discretizer.num_bins = 20"
   ]
@@ -54,8 +54,8 @@ def main(unused_argv):
       "dataset.name='3dshapes'",
       "evaluation.random_seed = 0",
       "beta_vae_sklearn.batch_size = 16",
-      "beta_vae_sklearn.num_train = 10000",
-      "beta_vae_sklearn.num_eval = 10000",
+      "beta_vae_sklearn.num_train = 10", #10000",
+      "beta_vae_sklearn.num_eval = 10", #10000",
       "discretizer.discretizer_fn = @histogram_discretizer",
       "discretizer.num_bins = 20"
       ]
@@ -69,9 +69,9 @@ def main(unused_argv):
       "dataset.name='3dshapes'",
       "evaluation.random_seed = 0",
       "factor_vae_score.batch_size = 16",
-      "factor_vae_score.num_train = 10000",
-      "factor_vae_score.num_eval = 10000",
-      "factor_vae_score.num_variance_estimate = 10000",
+      "factor_vae_score.num_train = 10", #10000",
+      "factor_vae_score.num_eval = 10", #10000",
+      "factor_vae_score.num_variance_estimate = 10", #10000",
       "discretizer.discretizer_fn = @histogram_discretizer",
       "discretizer.num_bins = 20"
       ]
@@ -86,8 +86,8 @@ def main(unused_argv):
       "dataset.name='3dshapes'",
       "evaluation.random_seed = 0",
       "dci.batch_size = 16",
-      "dci.num_train = 10000",
-      "dci.num_test = 10000",
+      "dci.num_train = 10", #10000",
+      "dci.num_test = 10", #10000",
       "discretizer.discretizer_fn = @histogram_discretizer",
       "discretizer.num_bins = 20"
       ]
