@@ -46,11 +46,14 @@ def _load(path):
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("base_path", None, "base path with all the models")
-flags.DEFINE_boolean("overwrite", False,
-                     "Whether to overwrite output directory.")
+flags.DEFINE_boolean("save", True,
+                     "Whether to save to file")
+flags.DEFINE_boolean("agg", True,
+                     "aggregate random seeds")
 
 def main(unused_argv):
 
+  assert FLAGS.base_path != None, "please enter basepath --base_path="
   base_path = FLAGS.base_path
 
   patterns=[]
@@ -69,97 +72,111 @@ def main(unused_argv):
   task_id=0
   for pattern in patterns:
 
-	  all_data=_get(pattern)
-	  print(list(all_data.columns.values))
-	  regression_results=[]
-	  model_names=[]
-	  dataset_names=[]
-	  print(all_data)
-	  for i in range(all_data.shape[0]):
-	    #extract relevant information from jason
-	    name=all_data.loc[i,'path'].split('/')[1]
-	    model_name=name.split('_')[0]
-	    dataset_name=name.split('_')[2]
-	    rng_name=name.split('_')[3]
-	    if task_id==0:
-	    	#performance=all_data.loc[i,'100:mean_holdout_mse']
-	    	performance=all_data.loc[i,'127500:mean_holdout_mse']
-	    if task_id==1:
-	    	performance=all_data.loc[i,'reconstruction_loss']
-	    if task_id==2:
-	    	performance=all_data.loc[i,'loss']
-	    regression_results.append((model_name,dataset_name,rng_name,float(performance)))
-	    model_names.append(model_name)
-	    dataset_names.append(dataset_name)
+      all_data=_get(pattern)
+      #print(list(all_data.columns.values))
+      regression_results=[]
+      model_names=[]
+      dataset_names=[]
+      #print(all_data)
+      for i in range(all_data.shape[0]):
+        #extract relevant information from jason
+        name=all_data.loc[i,'path'].split('/')[1]
+        
+        dataset_name=name.split('_')[2] 
+        if FLAGS.agg:
+            model_name=name.split('_')[0]   
+            rng_name=name.split('_')[3]
+        else:
+            model_name=model_name=name.split('_')[0] + "_" +name.split('_')[3]   
+            rng_name=-1
 
-	  #get all unique model names and datasets
-	  model_names = sorted(set(model_names))
-	  dataset_names = sorted(set(dataset_names))
+        if task_id==0:
+            performance=all_data.loc[i,'100:mean_holdout_mse']
+            #performance=all_data.loc[i,'127500:mean_holdout_mse']
+        if task_id==1:
+            performance=all_data.loc[i,'reconstruction_loss']
+        if task_id==2:
+            performance=all_data.loc[i,'loss']
+        regression_results.append((model_name,dataset_name,rng_name,float(performance)))
+        model_names.append(model_name)
+        dataset_names.append(dataset_name)
+
+      #get all unique model names and datasets
+      model_names = sorted(set(model_names))
+      dataset_names = sorted(set(dataset_names))
       
-	  print("Found " + str(len(model_names))+ " models and " + str(len(dataset_names))+ " datasets")
+      print("Found " + str(len(model_names))+ " models and " + str(len(dataset_names))+ " datasets")
 
-	  #agregate the results
-	  plot_lst=[]
-	  for name in model_names:
-	    values=[]
-	    for dataset in dataset_names:
-	      t_mse=[]
-	      for regression_result in regression_results:
-	        if regression_result[0]==name and regression_result[1] ==dataset:
-	          t_mse.append(regression_result[3])
-	      t_mean_mse=np.mean(t_mse)
-	      t_mean_std=np.std(t_mse)
-	      values.append((dataset,t_mean_mse,t_mean_std))
-	    plot_lst.append((name,values))
+      #agregate the results
+      plot_lst=[]
+      for name in model_names:
+        values=[]
+        for dataset in dataset_names:
+          t_mse=[]
+          for regression_result in regression_results:
+            if regression_result[0]==name and regression_result[1] ==dataset:
+              t_mse.append(regression_result[3])
+          t_mean_mse=np.mean(t_mse)
+          t_mean_std=np.std(t_mse)
+          values.append((dataset,t_mean_mse,t_mean_std))
+        plot_lst.append((name,values))
 
-	  #plot the 
-	  plt.figure(0)
-	  for plot in plot_lst:
-	    x=np.arange(start=0, stop=len(dataset_names), step=1)
-	    v=np.array(plot[1])
-	    y=v[:,1].astype('float')
-	    e=v[:,2].astype('float')
-	    plt.errorbar(x, y, e,  capsize=3,label=plot[0])
+      #plot the 
+      plt.figure(task_id)
+      for plot in plot_lst:
+        x=np.arange(start=0, stop=len(dataset_names), step=1)
+        v=np.array(plot[1])
+        y=v[:,1].astype('float')
+        e=v[:,2].astype('float')
+        plt.errorbar(x, y, e,  capsize=3,label=plot[0])
 
-	  plt.legend(loc="lower left")
-	  if task_id==0:
-	  	plt.ylabel('Mean Squared Error')
-	  	plt.title('regression downstreamtasks')
-	  if task_id==1:
-	  	plt.ylabel('L2 loss')
-	  	plt.title('reconstruction downstreamtasks')
-	  if task_id==2:
-	  	plt.ylabel('Loss')
-	  	plt.title('training performance')
+      plt.legend(loc="lower left")
+      if task_id==0:
+        plt.ylabel('Mean Squared Error')
+        plt.title('regression downstreamtasks')
+        savename="downstream_regression"
+      if task_id==1:
+        plt.ylabel('L2 loss')
+        plt.title('reconstruction downstreamtasks')
+        savename="downstream_recon"
+      if task_id==2:
+        plt.ylabel('Loss')
+        plt.title('training performance')
+        savename="training"
 
+       
 
-	  plt.xticks(x, dataset_names, size='small',rotation='vertical')
-	  plt.xlabel('Datasets')
-	  plt.show()
+      
+      plt.xticks(x, dataset_names, size='small',rotation='vertical')
+      plt.xlabel('Datasets')
+      if FLAGS.save:
+          plt.savefig("results/"+savename +".png")
+      else:
+          plt.show()
 
-	  #write latex table:
-	  if task_id==0:
-	  	file = open("regression_results_latex_table.txt","w") 
-	  if task_id==1:
-	  	file = open("reconstruction_results_latex_table.txt","w") 
-	  if task_id==2:
-	  	file = open("training_results_latex_table.txt","w") 
-	  file.write("Model &") 
-	  for dataset_name in dataset_names:
-	      file.write(str(dataset_name)) 
-	      file.write(" & ") 
-	  file.write("\n")
-	  for plot in plot_lst:
-	    file.write(str(plot[0])+" & ") 
-	    v=np.array(plot[1])
-	    y=v[:,1].astype('float')
-	    std=v[:,2].astype('float')
-	    for py,pstd in zip(y,std):
-	      file.write("$" + str(np.round(py,2))+" \\pm " + str(np.round(pstd,2))+"$ & ")
-	    file.write("\n")
-	  file.close()
+      #write latex table:
+      if task_id==0:
+        file = open("results/"+"regression_results_latex_table.txt","w") 
+      if task_id==1:
+        file = open("results/"+"reconstruction_results_latex_table.txt","w") 
+      if task_id==2:
+        file = open("results/"+"training_results_latex_table.txt","w") 
+      file.write("Model &") 
+      for dataset_name in dataset_names:
+          file.write(str(dataset_name)) 
+          file.write(" & ") 
+      file.write("\n")
+      for plot in plot_lst:
+        file.write(str(plot[0])+" & ") 
+        v=np.array(plot[1])
+        y=v[:,1].astype('float')
+        std=v[:,2].astype('float')
+        for py,pstd in zip(y,std):
+          file.write("$" + str(np.round(py,2))+" \\pm " + str(np.round(pstd,2))+"$ & ")
+        file.write("\n")
+      file.close()
 
-	  task_id+=1
+      task_id+=1
 
 
 def get_model_data(task_id, pattern):
