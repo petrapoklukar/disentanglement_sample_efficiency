@@ -15,12 +15,8 @@ import time
 from absl import flags
 import sys
 sys.path.append('..')
-from disentanglement_lib.methods.unsupervised import train_partial as unsupervised_train_partial
-from disentanglement_lib.methods.supervised import train_partial as supervised_train_partial
-from disentanglement_lib.preprocessing import preprocess
-from disentanglement_lib.postprocessing import postprocess
+from disentanglement_lib.evaluation.metrics import utils
 from disentanglement_lib.evaluation import evaluate
-from disentanglement_lib.visualize import visualize_model
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
@@ -37,6 +33,7 @@ def main(unused_argv):
   print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
   vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
   representation_path = os.path.join(vae_path, "representation")
+  print(vae_path, representation_path)
 
   print("\n\n*- Evaluating MIG.")
   gin_bindings = [
