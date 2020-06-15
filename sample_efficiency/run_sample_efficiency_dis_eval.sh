@@ -37,7 +37,7 @@ for model in "${modelArr[@]}"
 do
 
 
-RUNS_PATH="${SOURCE_PATH}/3dshapes_models/${model}${dataset}_${seed}"
+RUNS_PATH="${SOURCE_PATH}/3dshapes_models/${model}${dataset}_${seed}/metrics"
 echo $RUNS_PATH
 
 "${SBATCH_OR_CAT}" << HERE
