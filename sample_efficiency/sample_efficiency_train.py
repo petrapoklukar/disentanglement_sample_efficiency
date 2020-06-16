@@ -76,6 +76,8 @@ def main(unused_argv):
     gin_file = "3d_shape_btcvae.gin"
   if FLAGS.model == "annvae":
     gin_file = "3d_shape_annvae.gin"
+  if FLAGS.model == "radnomvae":
+    gin_file = "3d_shape_randomvae.gin"
 
   print("\n\n*- Training '%s' \n\n" %(FLAGS.model))
   vae_gin_bindings = [
@@ -103,7 +105,71 @@ def main(unused_argv):
       model_path, representation_path, FLAGS.overwrite, gin_config_files=None, 
       gin_bindings=postprocess_gin_bindings)
   print("\n\n*- Postprocessing DONE \n\n")
+
+  # --- Evaluate disentanglement metrics
+  print("\n\n*- Evaluating MIG.")
+  gin_bindings = [
+     "evaluation.evaluation_fn = @mig",
+     "dataset.name='3dshapes'",
+     "evaluation.random_seed = 0",
+     "mig.num_train = 10000",
+     "discretizer.discretizer_fn = @histogram_discretizer",
+     "discretizer.num_bins = 20"
+  ]
+  result_path = os.path.join(vae_path, "metrics", "mig")
+  evaluate.evaluate_with_gin(
+      representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
+  print("\n\n*- Evaluating BetaVEA.")
+  gin_bindings = [
+      "evaluation.evaluation_fn = @beta_vae_sklearn",
+      "dataset.name='3dshapes'",
+      "evaluation.random_seed = 0",
+      "beta_vae_sklearn.batch_size = 16",
+      "beta_vae_sklearn.num_train = 10000",
+      "beta_vae_sklearn.num_eval = 5000",
+      "discretizer.discretizer_fn = @histogram_discretizer",
+      "discretizer.num_bins = 20"
+      ]
+  result_path = os.path.join(vae_path, "metrics", "bvae")
+  evaluate.evaluate_with_gin(
+      representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
+  
+  print("\n\n*- Evaluating FactorVAE.")
+  gin_bindings = [
+      "evaluation.evaluation_fn = @factor_vae_score",
+      "dataset.name='3dshapes'",
+      "evaluation.random_seed = 0",
+      "factor_vae_score.batch_size = 16",
+      "factor_vae_score.num_train = 10000",
+      "factor_vae_score.num_eval = 5000",
+      "factor_vae_score.num_variance_estimate = 10000",
+      "discretizer.discretizer_fn = @histogram_discretizer",
+      "discretizer.num_bins = 20"
+      ]
+  
+  result_path = os.path.join(vae_path, "metrics", "fvae")
+  evaluate.evaluate_with_gin(
+      representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
+  
+  print("\n\n*- Evaluating DCI.")
+  gin_bindings = [
+      "evaluation.evaluation_fn = @dci",
+      "dataset.name='3dshapes'",
+      "evaluation.random_seed = 0",
+      "dci.batch_size = 16",
+      "dci.num_train = 10000",
+      "dci.num_test = 5000",
+      "discretizer.discretizer_fn = @histogram_discretizer",
+      "discretizer.num_bins = 20"
+      ]
+
+  result_path = os.path.join(vae_path, "metrics", "dci")
+  evaluate.evaluate_with_gin(
+      representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
+  print("\n\n*- Evaluation COMPLETED \n\n")
+
+  # --- Downstream tasks
   print("\n\n*- Training downstream factor regression '%s' \n\n" %(FLAGS.model))
   downstream_regression_train_gin_bindings = [
       "evaluation.evaluation_fn = @downstream_regression_on_representations",
