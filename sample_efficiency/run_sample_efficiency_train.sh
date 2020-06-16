@@ -8,22 +8,23 @@ AT="@"
 SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
-	"b8vae"
-	"vae"
-	"bvae"
-	"fvae"
-	"btcvae"
-	"annvae"
+	"randomvae"
+	# "b8vae"
+	# "vae"
+	# "bvae"
+	# "fvae"
+	# "btcvae"
+	# "annvae"
 )
 
 declare -a datasetArr=(
-	"3dshapes_model_s100"
-	"3dshapes_model_s1000"
-	"3dshapes_model_s10000"
+	# "3dshapes_model_s100"
+	# "3dshapes_model_s1000"
+	# "3dshapes_model_s10000"
 	"3dshapes_model_s50000"
-	"3dshapes_model_s100000"
-	"3dshapes_model_s150000"
-	"3dshapes_model_s250000"
+	# "3dshapes_model_s100000"
+	# "3dshapes_model_s150000"
+	# "3dshapes_model_s250000"
 	)
 		
 declare -a seedArr=(2805) #1602 1201 1012
