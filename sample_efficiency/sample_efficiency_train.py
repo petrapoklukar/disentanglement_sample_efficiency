@@ -63,7 +63,6 @@ def main(unused_argv):
     except:
       time.sleep(30)
 
-  
   if FLAGS.model == "vae":
     gin_file = "3d_shape_vae.gin"
   if FLAGS.model == "bvae":
@@ -76,7 +75,7 @@ def main(unused_argv):
     gin_file = "3d_shape_btcvae.gin"
   if FLAGS.model == "annvae":
     gin_file = "3d_shape_annvae.gin"
-  if FLAGS.model == "radnomvae":
+  if FLAGS.model == "randomvae":
     gin_file = "3d_shape_randomvae.gin"
 
   print("\n\n*- Training '%s' \n\n" %(FLAGS.model))
