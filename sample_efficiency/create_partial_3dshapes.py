@@ -207,7 +207,7 @@ def create_model_splits(filename):
     print(len(images_split))
     np.random.seed(2610)
     all_indices = np.arange(len(indices_split))
-    split_sizes = [1000]#[10000, 50000, 100000, 150000, 250000]
+    split_sizes = [100]#[1000, 10000, 50000, 100000, 150000, 250000]
     
     split_indices = []
     for split_size in split_sizes:
@@ -310,7 +310,7 @@ def main():
 
 if __name__ == '__main__':
     random_state = np.random.RandomState(234)
-    create_split_train_and_validation('3dshapes_model_s1000', 
+    create_split_train_and_validation('3dshapes_model_s100', 
                                       random_state, 
                                       unit_labels=False)
 
