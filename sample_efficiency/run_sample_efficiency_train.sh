@@ -9,11 +9,11 @@ SBATCH_OR_CAT=sbatch
 
 declare -a modelArr=(
 	"b8vae"
-	"vae"
-	"bvae"
-	"fvae"
-	"btcvae"
-	"annvae"
+	# "vae"
+	# "bvae"
+	# "fvae"
+	# "btcvae"
+	# "annvae"
 )
 
 declare -a datasetArr=(
@@ -48,7 +48,7 @@ mkdir -p $RUNS_PATH
 #SBATCH --error="${RUNS_PATH}/%J_slurm.err"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user="poklukar${AT}kth.se"
-#SBATCH --constrain="belegost|rivendell"
+#SBATCH --constrain="shire"
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=50GB
