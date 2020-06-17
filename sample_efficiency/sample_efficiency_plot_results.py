@@ -250,9 +250,118 @@ def plot_regression_agg_model_results(pattern, result_str, ylabel, task_name):
   plt.close()
 
 
-def plot_regression_model_results(pattern, result_str, ylabel, task_name):
-  base_path = FLAGS.base_path
 
+def plot_regression_mse_model_results_2(pattern, result_str, ylabel, task_name):
+  regression_results, model_names, dataset_names = get_model_data(
+    pattern, result_str)
+
+  #get all unique model names and datasets
+  model_names = sorted(set(model_names))
+  dataset_names = sorted(set(dataset_names), key=lambda x: int(x[1:]))
+
+  print("Found " + str(len(model_names))+ " models and " + str(len(dataset_names))+ " datasets")
+
+  #agregate the results
+  plot_lst=[]
+  for name in model_names:
+    values=[]
+    for dataset in dataset_names:
+      t_mse=[]
+      for regression_result in regression_results:
+        if regression_result[0]==name and regression_result[1] ==dataset:
+          t_mse.append(regression_result[3]*6)
+      t_mean_mse=np.mean(t_mse)
+      t_mean_std=np.std(t_mse)
+      values.append((dataset,t_mean_mse,t_mean_std, np.array(t_mse)))
+    plot_lst.append((name,values))
+    
+  #plot the results
+  plt.figure(0, figsize=(10, 5))
+  for plot in plot_lst:
+    x=np.arange(start=0, stop=len(dataset_names), step=1)
+    v=np.array(plot[1])
+    y=v[:,1].astype('float')
+    e=v[:,2].astype('float')
+    plt.errorbar(x, y, e,  capsize=3,label=plot[0])
+
+  plt.legend(loc="upper right")
+  plt.ylabel(ylabel)
+  name = 'results/agg_models_sum_{0}_{1}.png'.format(task_name, result_str.split(':')[-1])
+  plt.suptitle(task_name + ', ' + result_str.split(':')[-1])
+
+  plt.xticks(x, dataset_names, size='small',rotation='vertical')
+  plt.xlabel('Datasets')
+  plt.subplots_adjust(wspace=0.5, hspace=0.3)
+  plt.savefig(name)
+  plt.clf()
+  plt.close()
+    
+#def plot_regression_mse_model_results(unused_argv):
+#  base_path = FLAGS.base_path
+#  # Regression tasks
+#  pattern = os.path.join(base_path,"*/metrics/factor_regression/results/json/evaluation_results.json")
+##  result_str_list = ['127500:holdout_mse_factor_0', '127500:holdout_mse_factor_1',
+##    '127500:holdout_mse_factor_2', '127500:holdout_mse_factor_3', '127500:holdout_mse_factor_4',
+##    '127500:holdout_mse_factor_5'] 
+##  agg_pds = []
+##  for result_str in result_str_list:
+##    regression_results, model_names, dataset_names = get_model_data(
+##      pattern, result_str)
+##    factor_regression_results = list(map(lambda x: [result_str] + list(x), regression_results))
+##    agg_pds += factor_regression_results
+##
+##  agg_pd = pd.DataFrame(agg_pds, columns=['factor', 'model_name', 'dataset_name', 'seed', 'score'])
+##  factor_sum_agg_pd = agg_pd.groupby(['model_name', 'dataset_name', 'seed'])['score'].apply(lambda x : x.astype(float).sum()).reset_index()
+##  avg_per_seed_factor_sum_agg_pd = factor_sum_agg_pd.groupby(['model_name', 'dataset_name'])['score'].mean().reset_index()
+#  
+#  agg_pds = []
+#  regression_results, model_names, dataset_names = get_model_data(
+#      pattern, '127500:mean_holdout_mse')
+#  factor_regression_results = list(map(lambda x: [x[0], x[1], x[2], x[3]*6], regression_results))
+#  agg_pds += factor_regression_results
+#  agg_pd = pd.DataFrame(agg_pds, columns=['model_name', 'dataset_name', 'seed', 'score'])
+#  avg_per_seed_factor_sum_pd = agg_pd.groupby(['model_name', 'dataset_name'])['score'].mean().reset_index()
+#  
+#  print(avg_per_seed_factor_sum_pd)
+#  print(avg_per_seed_factor_sum_pd.shape)
+#  print(avg_per_seed_factor_sum_pd.dataset_name.shape)
+#  dataset_names = sorted(list(avg_per_seed_factor_sum_pd.dataset_name.unique()),
+#                         key=lambda x: int(x[1:]))
+#  model_names = sorted(set(avg_per_seed_factor_sum_pd.model_name.unique()))
+#  
+#  plt.figure(0, figsize=(10, 5))
+#  for model in model_names:
+#    print(model)
+#    df_model = avg_per_seed_factor_sum_pd.query("model_name == {0}".format(model))
+#    print(df_model)
+#    plt.plot(df_model.dataset_name, df_model.score)
+#  plt.show()
+##  x=np.arange(start=0, stop=len(dataset_names), step=1)
+##    y=sorted(avg_per_seed_factor_sum_pd.query("model_name == {0}"), key=
+##    v=np.array(plot_lst[plot][1])
+##    y=v[:,1].astype('float')
+##    e=v[:,2].astype('float')
+##    print(x.repeat(3).shape, np.concatenate(v[:,3]).astype('float').shape)
+##    plt.errorbar(x, y, e,  capsize=3, color='lightskyblue')
+##    plt.scatter(x.repeat(3), np.concatenate(v[:,3]).astype('float'))
+##    plt.title(plot_lst[plot][0])
+##    plt.xticks([], [])
+##    if plot >= 3:
+##      plt.xticks(x, dataset_names, size='small',rotation='vertical')
+##      plt.xlabel('Datasets')
+##
+##    if plot in [0, 3]:
+##      plt.ylabel(ylabel)
+##    name = 'results/per_model_{0}_{1}.png'.format(task_name, result_str.split(':')[-1])
+##    plt.suptitle(task_name + ', ' + result_str.split(':')[-1])
+##
+##  plt.subplots_adjust(wspace=0.5, hspace=0.3)
+##  plt.savefig(name)
+##  plt.clf()
+##  plt.close()
+
+
+def plot_regression_model_results(pattern, result_str, ylabel, task_name):
   regression_results, model_names, dataset_names = get_model_data(
     pattern, result_str)
 
@@ -284,6 +393,7 @@ def plot_regression_model_results(pattern, result_str, ylabel, task_name):
     v=np.array(plot_lst[plot][1])
     y=v[:,1].astype('float')
     e=v[:,2].astype('float')
+    print(x.repeat(3).shape, np.concatenate(v[:,3]).astype('float').shape)
     plt.errorbar(x, y, e,  capsize=3, color='lightskyblue')
     plt.scatter(x.repeat(3), np.concatenate(v[:,3]).astype('float'))
     plt.title(plot_lst[plot][0])
@@ -302,9 +412,8 @@ def plot_regression_model_results(pattern, result_str, ylabel, task_name):
   plt.clf()
   plt.close()
 
-def plot_reconstruction_model_results(pattern, result_str):
-  base_path = FLAGS.base_path
 
+def plot_reconstruction_model_results(pattern, result_str):
   regression_results, model_names, dataset_names = get_model_data(
     pattern, result_str)
 
@@ -403,6 +512,12 @@ def plot_agg_models_results(unused_argv):
     plot_regression_agg_model_results(pattern, result_str, ylabel='Loss', 
     task_name='training')
 
+def plot_agg_sum_models_results(unused_argv):
+  base_path = FLAGS.base_path
+  pattern = os.path.join(base_path,"*/metrics/factor_regression/results/json/evaluation_results.json")
+  plot_regression_mse_model_results_2(pattern, '127500:mean_holdout_mse', ylabel='Mean Squared Error', 
+    task_name='regression_downstreamtasks_sum')
+
 def plot_agg_models_mig(unused_argv):
   base_path = FLAGS.base_path
   pattern = os.path.join(base_path,"*/metrics/mig/results/json/evaluation_results.json")
@@ -429,12 +544,15 @@ def plot_agg_models_dci(unused_argv):
     plot_regression_agg_model_results(pattern, result_str, ylabel='DCI', 
       task_name='dci')
 
-
-if __name__ == "__main__":
-  #app.run(plot_agg_models_mig)
-  #app.run(plot_agg_models_bvae)
-  #app.run(plot_agg_models_fvae)
-  #app.run(plot_agg_models_dci)
+def run_all(unused_argv):
+  app.run(plot_agg_models_mig)
+  app.run(plot_agg_models_bvae)
+  app.run(plot_agg_models_fvae)
+  app.run(plot_agg_models_dci)
   app.run(plot_agg_models_results)
+  app.run(plot_per_model_results)
+  
+if __name__ == "__main__":
+  app.run(plot_agg_sum_models_results)
+#  app.run(plot_per_model_results)
     #app.run(main)
-    #app.run(plot_per_model_results)
