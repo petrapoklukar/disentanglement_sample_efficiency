@@ -47,7 +47,7 @@ echo $RUNS_PATH
 #SBATCH --error="${RUNS_PATH}/%J_slurm.err"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user="poklukar${AT}kth.se"
-#SBATCH --constrain="belegost|rivendell"
+#SBATCH --constrain="belegost|rivendell|shire"
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=50GB
