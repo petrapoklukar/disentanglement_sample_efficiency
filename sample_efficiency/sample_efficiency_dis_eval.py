@@ -40,11 +40,11 @@ def main(unused_argv):
      "evaluation.evaluation_fn = @mig",
      "dataset.name='3dshapes'",
      "evaluation.random_seed = 0",
-     "mig.num_train = 10000",
+     "mig.num_train = 100000",
      "discretizer.discretizer_fn = @histogram_discretizer",
      "discretizer.num_bins = 20"
   ]
-  result_path = os.path.join(vae_path, "metrics", "mig")
+  result_path = os.path.join(vae_path, "metrics", "mig_10000")
   evaluate.evaluate_with_gin(
       representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
@@ -54,12 +54,12 @@ def main(unused_argv):
       "dataset.name='3dshapes'",
       "evaluation.random_seed = 0",
       "beta_vae_sklearn.batch_size = 16",
-      "beta_vae_sklearn.num_train = 10000",
+      "beta_vae_sklearn.num_train = 100000",
       "beta_vae_sklearn.num_eval = 5000",
       "discretizer.discretizer_fn = @histogram_discretizer",
       "discretizer.num_bins = 20"
       ]
-  result_path = os.path.join(vae_path, "metrics", "bvae")
+  result_path = os.path.join(vae_path, "metrics", "bvae_10000")
   evaluate.evaluate_with_gin(
       representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
@@ -69,14 +69,14 @@ def main(unused_argv):
       "dataset.name='3dshapes'",
       "evaluation.random_seed = 0",
       "factor_vae_score.batch_size = 16",
-      "factor_vae_score.num_train = 10000",
+      "factor_vae_score.num_train = 100000",
       "factor_vae_score.num_eval = 5000",
-      "factor_vae_score.num_variance_estimate = 10000",
+      "factor_vae_score.num_variance_estimate = 100000",
       "discretizer.discretizer_fn = @histogram_discretizer",
       "discretizer.num_bins = 20"
       ]
   
-  result_path = os.path.join(vae_path, "metrics", "fvae")
+  result_path = os.path.join(vae_path, "metrics", "fvae_10000")
   evaluate.evaluate_with_gin(
       representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
@@ -86,13 +86,13 @@ def main(unused_argv):
       "dataset.name='3dshapes'",
       "evaluation.random_seed = 0",
       "dci.batch_size = 16",
-      "dci.num_train = 10000",
+      "dci.num_train = 100000",
       "dci.num_test = 5000",
       "discretizer.discretizer_fn = @histogram_discretizer",
       "discretizer.num_bins = 20"
       ]
 
-  result_path = os.path.join(vae_path, "metrics", "dci")
+  result_path = os.path.join(vae_path, "metrics", "dci_10000")
   evaluate.evaluate_with_gin(
       representation_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
 
