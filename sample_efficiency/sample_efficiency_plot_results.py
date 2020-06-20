@@ -520,39 +520,44 @@ def plot_agg_sum_models_results(unused_argv):
 
 def plot_agg_models_mig(unused_argv):
   base_path = FLAGS.base_path
-  pattern = os.path.join(base_path,"*/metrics/mig/results/json/evaluation_results.json")
+  task_name = 'mig_10000'
+  pattern = os.path.join(base_path,"*/metrics/{0}/results/json/evaluation_results.json".format(task_name))
   plot_regression_agg_model_results(pattern, 'discrete_mig', ylabel='MIG', 
-    task_name='mig')
+    task_name=task_name)
 
 def plot_agg_models_bvae(unused_argv):
   base_path = FLAGS.base_path
-  pattern = os.path.join(base_path,"*/metrics/bvae/results/json/evaluation_results.json")
+  task_name = 'bvae_10000'
+  pattern = os.path.join(base_path,"*/metrics/{0}/results/json/evaluation_results.json".format(task_name))
   plot_regression_agg_model_results(pattern, 'eval_accuracy', ylabel='BetaVAE', 
-    task_name='bvae')
+    task_name=task_name)
 
 def plot_agg_models_fvae(unused_argv):
   base_path = FLAGS.base_path
-  pattern = os.path.join(base_path,"*/metrics/fvae/results/json/evaluation_results.json")
+  task_name = 'fvae_10000'
+  pattern = os.path.join(base_path,"*/metrics/{0}/results/json/evaluation_results.json".format(task_name))
   plot_regression_agg_model_results(pattern, 'eval_accuracy', ylabel='FactorVAE', 
-    task_name='fvae')
+    task_name=task_name)
 
 def plot_agg_models_dci(unused_argv):
+  task_name = 'dci_10000'
   base_path = FLAGS.base_path
-  pattern = os.path.join(base_path,"*/metrics/dci/results/json/evaluation_results.json")
+  pattern = os.path.join(base_path,"*/metrics/{0}/results/json/evaluation_results.json".format(task_name))
   result_str_list = ['informativeness_test', 'disentanglement', 'completeness']
   for result_str in result_str_list:
     plot_regression_agg_model_results(pattern, result_str, ylabel='DCI', 
-      task_name='dci')
+      task_name=task_name)
 
 def run_all(unused_argv):
   app.run(plot_agg_models_mig)
   app.run(plot_agg_models_bvae)
   app.run(plot_agg_models_fvae)
   app.run(plot_agg_models_dci)
-  app.run(plot_agg_models_results)
-  app.run(plot_per_model_results)
+  # app.run(plot_agg_models_results)
+  # app.run(plot_per_model_results)
   
 if __name__ == "__main__":
-  app.run(plot_agg_sum_models_results)
+  app.run(plot_agg_models_dci)
+  # app.run(plot_agg_sum_models_results)
 #  app.run(plot_per_model_results)
     #app.run(main)
