@@ -32,7 +32,7 @@ def main(unused_argv):
   
   print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
 #  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
-  vae_path = FLAGS.model
+  vae_path = os.path.join(base_path, FLAGS.model)
   model_path = os.path.join(vae_path, "model")
   print(vae_path, model_path)
 
