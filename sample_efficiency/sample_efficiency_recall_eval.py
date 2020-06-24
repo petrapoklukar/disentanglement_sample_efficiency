@@ -31,7 +31,8 @@ def main(unused_argv):
   base_path = "3dshapes_models"
   
   print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
-  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
+#  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
+  vae_path = FLAGS.model
   model_path = os.path.join(vae_path, "model")
   print(vae_path, model_path)
 
@@ -42,6 +43,7 @@ def main(unused_argv):
       "evaluate_with_decodings.random_seed = 0",
       "dataset.name='3dshapes'",
       "recall.num_recall_samples = 100",
+      "recall.nhood_sizes = [3]",
   ]
   result_path = os.path.join(vae_path, "metrics", "test_recall_100")
   evaluate_with_decodings.evaluate_with_gin(

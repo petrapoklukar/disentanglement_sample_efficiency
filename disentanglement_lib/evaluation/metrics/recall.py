@@ -30,7 +30,8 @@ def compute_recall(ground_truth_data,
                    decoder_fn,
                    random_state,
                    artifact_dir=None,
-                   num_recall_samples=gin.REQUIRED
+                   num_recall_samples=gin.REQUIRED,
+                   nhood_sizes=gin.REQUIRED
                    ):
   """TBA
 
@@ -75,9 +76,6 @@ def compute_recall(ground_truth_data,
     print(gt_samples.shape)  
     gt_pca = PCA(n_components=1000)
     reduced_gt_samples = gt_pca.fit_transform(gt_samples)
-    
-    
-    nhood_sizes = [3, 5, 7, 10, 12]
 
     # compute model recall: gt vs generated
     gt_generated_result = iprd.knn_precision_recall_features(
