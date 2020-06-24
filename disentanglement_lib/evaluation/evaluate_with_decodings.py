@@ -17,6 +17,7 @@ import time
 import warnings
 from disentanglement_lib.data.ground_truth import named_data
 from disentanglement_lib.postprocessing import methods  # pylint: disable=unused-import
+from disentanglement_lib.evaluation.metrics import recall
 from disentanglement_lib.utils import convolute_hub
 from disentanglement_lib.utils import results
 import numpy as np

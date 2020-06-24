@@ -15,12 +15,10 @@ from disentanglement_lib.evaluation.metrics import utils
 import numpy as np
 from six.moves import range
 import gin.tf
-from sklearn.metrics import mean_squared_error
 from disentanglement_lib.data.ground_truth import named_data
 import tensorflow as tf
 import iprd_score as iprd 
 from sklearn.decomposition import PCA
-
 
 
 @gin.configurable(
@@ -28,12 +26,12 @@ from sklearn.decomposition import PCA
     blacklist=["ground_truth_data", "encoder_fn", "decoder_fn", "random_state",
                "artifact_dir"])
 def compute_recall(ground_truth_data,
-                            encoder_fn, 
-                            decoder_fn,
-                            random_state,
-                            artifact_dir=None,
-                            num_recall_samples=gin.REQUIRED
-                            ):
+                   encoder_fn, 
+                   decoder_fn,
+                   random_state,
+                   artifact_dir=None,
+                   num_recall_samples=gin.REQUIRED
+                   ):
   """TBA
 
   Args:
