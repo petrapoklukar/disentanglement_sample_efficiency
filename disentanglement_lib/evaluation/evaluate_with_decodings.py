@@ -128,7 +128,8 @@ def evaluate(model_dir,
     transform_fn, transform_checkpoint_path = postprocess_fn(
         dataset, _gaussian_encoder, np.random.RandomState(random_seed),
         output_dir)
-    
+
+    print('\n\n\n Calculating recall')
     # Computes scores of the representation based on the evaluation_fn.
     if _has_kwarg_or_kwargs(evaluation_fn, "artifact_dir"):
       artifact_dir = os.path.join(model_dir, "artifacts")
