@@ -39,7 +39,7 @@ def main(unused_argv):
   gin_bindings = [
       "evaluate_with_decodings.evaluation_fn = @recall",
       "evaluate_with_decodings.postprocess_fn = @mean_representation",
-      "evaluation.random_seed = 0",
+      "evaluate_with_decodings.random_seed = 0",
       "dataset.name='3dshapes'",
       "recall.num_recall_samples = 100",
   ]
