@@ -12,12 +12,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from disentanglement_lib.evaluation.metrics import utils
+from disentanglement_lib.evaluation.metrics import iprd_score as iprd 
 import numpy as np
 from six.moves import range
 import gin.tf
 from disentanglement_lib.data.ground_truth import named_data
 import tensorflow as tf
-import iprd_score as iprd 
 from sklearn.decomposition import PCA
 
 
