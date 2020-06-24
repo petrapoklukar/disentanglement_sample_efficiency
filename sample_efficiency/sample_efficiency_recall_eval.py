@@ -6,14 +6,6 @@ Created on Wed Jun 24 16:47:52 2020
 @author: petrapoklukar
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 15 09:39:55 2020
-
-@author: petrapoklukar
-"""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
