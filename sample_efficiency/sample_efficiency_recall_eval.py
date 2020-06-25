@@ -30,7 +30,7 @@ flags.DEFINE_integer("rng", 0,
 
 def main(unused_argv):
   base_path = "3dshapes_models"
-  
+  print(FLAGS.model, FLAGS.dataset, FLAGS.rng)
   print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
   vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
 #  vae_path = os.path.join(base_path, FLAGS.model)
