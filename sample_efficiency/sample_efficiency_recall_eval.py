@@ -44,6 +44,7 @@ def main(unused_argv):
       "dataset.name='3dshapes_model_s100'",
       "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3, 5]",
+      "recall.num_interventions_per_latent_dim = 5"
   ]
   result_path = os.path.join(vae_path, "metrics", "test_recall_100")
   evaluate_with_decodings.evaluate_with_gin(
