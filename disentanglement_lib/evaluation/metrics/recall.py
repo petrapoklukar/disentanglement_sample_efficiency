@@ -195,6 +195,8 @@ def agg_recall_dict(agg_d, new_d, inter_id):
   if inter_id == 0:
     return new_d
   else:
+    print(agg_d)
+    print(new_d)
     for k, v in new_d.items():
       print(agg_d[k].shape, new_d[k].shape)
       agg_d[k] = np.vstack([agg_d[k], new_d[k]])
