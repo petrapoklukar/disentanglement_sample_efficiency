@@ -124,18 +124,20 @@ def compute_recall(ground_truth_data,
             reduced_gen_fix_one_latent_from_prior_samples,
             nhood_sizes=nhood_sizes,
             row_batch_size=500, col_batch_size=100, num_gpus=1)
-        agg_recall_dict(agg_fix_one_vs_prior_generated_result, 
-                        fix_one_vs_prior_generated_result,
-                        intervention)
+        agg_fix_one_vs_prior_generated_result = agg_recall_dict(
+            agg_fix_one_vs_prior_generated_result, 
+            fix_one_vs_prior_generated_result,
+            intervention)
         
         fix_one_vs_prior_decoded_gt_result = iprd.knn_precision_recall_features(
             reduced_decoded_gt_samples, 
             reduced_gen_fix_one_latent_from_prior_samples,
             nhood_sizes=nhood_sizes,
             row_batch_size=500, col_batch_size=100, num_gpus=1)
-        agg_recall_dict(agg_fix_one_vs_prior_decoded_gt_result, 
-                        fix_one_vs_prior_decoded_gt_result,
-                        intervention)
+        agg_fix_one_vs_prior_decoded_gt_result = agg_recall_dict(
+            agg_fix_one_vs_prior_decoded_gt_result, 
+            fix_one_vs_prior_decoded_gt_result,
+            intervention)
         
         
         # --- vary one, fix the rest
@@ -156,18 +158,20 @@ def compute_recall(ground_truth_data,
             reduced_gen_fix_all_but_one_latent_from_prior_samples,
             nhood_sizes=nhood_sizes,
             row_batch_size=500, col_batch_size=100, num_gpus=1)
-        agg_recall_dict(agg_fix_all_but_one_vs_prior_generated_result, 
-                        fix_all_but_one_vs_prior_generated_result,
-                        intervention)
+        agg_fix_all_but_one_vs_prior_generated_result = agg_recall_dict(
+            agg_fix_all_but_one_vs_prior_generated_result, 
+            fix_all_but_one_vs_prior_generated_result,
+            intervention)
         
         fix_all_but_one_vs_prior_decoded_gt_result = iprd.knn_precision_recall_features(
             reduced_decoded_gt_samples, 
             reduced_gen_fix_all_but_one_latent_from_prior_samples,
             nhood_sizes=nhood_sizes,
             row_batch_size=500, col_batch_size=100, num_gpus=1)
-        agg_recall_dict(agg_fix_all_but_one_vs_prior_decoded_gt_result, 
-                        fix_all_but_one_vs_prior_decoded_gt_result,
-                        intervention)
+        agg_fix_all_but_one_vs_prior_decoded_gt_result = agg_recall_dict(
+            agg_fix_all_but_one_vs_prior_decoded_gt_result, 
+            fix_all_but_one_vs_prior_decoded_gt_result,
+            intervention)
       update_result_dict_with_agg(
           result_d, 
           [str(dim) + '_fix_one_vs_prior_generated_', agg_fix_one_vs_prior_generated_result],
