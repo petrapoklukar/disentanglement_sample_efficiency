@@ -54,11 +54,12 @@ def compute_recall(ground_truth_data,
   print(dummy_repr.shape)
   latent_shape = [num_recall_samples, int(dummy_repr.shape[-1])]
   print(latent_shape)
-  latent_prior_samples = tf.random_normal(latent_shape, 0, 1, name="decoder/latent_vectors")
-  print(latent_prior_samples.shape)
   
   sess = tf.Session()
   with sess.as_default():
+    latent_prior_samples = tf.random_normal(latent_shape, 0, 1, name="decoder/latent_vectors").eval()
+    print(latent_prior_samples.shape)
+
     # Generated samples
     generated_prior_samples = decoder_fn(latent_prior_samples)
     print(generated_prior_samples.shape)
