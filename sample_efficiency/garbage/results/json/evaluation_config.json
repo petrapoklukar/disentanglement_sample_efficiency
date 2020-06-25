@@ -1,0 +1,9 @@
+{
+  "dataset.name": "'3dshapes_model_s100'",
+  "evaluate_with_decodings.evaluation_fn": "@recall",
+  "evaluate_with_decodings.name": "''",
+  "evaluate_with_decodings.postprocess_fn": "@mean_representation",
+  "evaluate_with_decodings.random_seed": "0",
+  "recall.nhood_sizes": "[3, 5]",
+  "recall.num_recall_samples": "100"
+}

@@ -5,3 +5,5 @@ __pycache__/
 3d_shape_out/
 datasets/
 3dshapes_models/
+sample_efficiency/garbage/*
+garbage/

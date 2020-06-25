@@ -111,7 +111,7 @@ def compute_recall(ground_truth_data,
           row_batch_size=500, col_batch_size=100, num_gpus=1)
       update_result_dict(
           result_d, 
-          ['fix_one_vs_prior_generated_', fix_one_vs_prior_generated_result])
+          [str(dim) + '_fix_one_vs_prior_generated_', fix_one_vs_prior_generated_result])
       
       fix_one_vs_prior_decoded_gt_result = iprd.knn_precision_recall_features(
           reduced_decoded_gt_samples, 
@@ -120,7 +120,7 @@ def compute_recall(ground_truth_data,
           row_batch_size=500, col_batch_size=100, num_gpus=1)
       update_result_dict(
           result_d, 
-          ['fix_one_vs_prior_decoded_gt_', fix_one_vs_prior_decoded_gt_result])
+          [str(dim) + '_fix_one_vs_prior_decoded_gt_', fix_one_vs_prior_decoded_gt_result])
       
       
       # --- vary one, fix the rest
@@ -141,7 +141,7 @@ def compute_recall(ground_truth_data,
           row_batch_size=500, col_batch_size=100, num_gpus=1)
       update_result_dict(
           result_d, 
-          ['fix_all_but_one_vs_prior_generated_', fix_all_but_one_vs_prior_generated_result])
+          [str(dim) + '_fix_all_but_one_vs_prior_generated_', fix_all_but_one_vs_prior_generated_result])
       
       fix_all_but_one_vs_prior_decoded_gt_result = iprd.knn_precision_recall_features(
           reduced_decoded_gt_samples, 
@@ -150,7 +150,7 @@ def compute_recall(ground_truth_data,
           row_batch_size=500, col_batch_size=100, num_gpus=1)
       update_result_dict(
           result_d, 
-          ['fix_all_but_one_vs_prior_decoded_gt_', fix_all_but_one_vs_prior_decoded_gt_result])
+          [str(dim) + '_fix_all_but_one_vs_prior_decoded_gt_', fix_all_but_one_vs_prior_decoded_gt_result])
   return result_d
     
 

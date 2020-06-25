@@ -1,0 +1,56 @@
+{
+  "nhoods": [
+    3,
+    5
+  ],
+  "gt_generated_precision": [
+    0.0,
+    0.0
+  ],
+  "gt_generated_recall": [
+    1.0,
+    1.0
+  ],
+  "decoded_gt_generated_precision": [
+    0.99,
+    0.99
+  ],
+  "decoded_gt_generated_recall": [
+    1.0,
+    1.0
+  ],
+  "fix_one_vs_prior_generated_precision": [
+    1.0,
+    1.0
+  ],
+  "fix_one_vs_prior_generated_recall": [
+    1.0,
+    1.0
+  ],
+  "fix_one_vs_prior_decoded_gt_precision": [
+    0.99,
+    0.99
+  ],
+  "fix_one_vs_prior_decoded_gt_recall": [
+    1.0,
+    1.0
+  ],
+  "fix_all_but_one_vs_prior_generated_precision": [
+    1.0,
+    1.0
+  ],
+  "fix_all_but_one_vs_prior_generated_recall": [
+    0.29,
+    0.29
+  ],
+  "fix_all_but_one_vs_prior_decoded_gt_precision": [
+    1.0,
+    1.0
+  ],
+  "fix_all_but_one_vs_prior_decoded_gt_recall": [
+    0.35,
+    0.35
+  ],
+  "elapsed_time": 8.712666749954224,
+  "uuid": "48f56101-755f-4dd3-8bc8-03cd589d0026"
+}
