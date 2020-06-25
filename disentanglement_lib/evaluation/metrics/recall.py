@@ -46,10 +46,11 @@ def compute_recall(ground_truth_data,
   del artifact_dir
   train_ground_truth_data, test_ground_truth_data = ground_truth_data
   ground_truth_data = train_ground_truth_data
+  dummy_input = ground_truth_data.sample_observations(1, random_state)
   # Samples from the prior
   observation_shape = [1] + ground_truth_data.observation_shape # [1, 64, 64, 3]
   print(observation_shape)
-  dummy_input = tf.ones(ground_truth_data.observation_shape, tf.int32)
+#  dummy_input = tf.ones(ground_truth_data.observation_shape, tf.int32)
 #  dummy_input2 = tf.ones([None] + ground_truth_data.observation_shape, tf.int32)
 #  print(encoder_fn(dummy_input2).shape)
   print(encoder_fn(dummy_input).shape)
