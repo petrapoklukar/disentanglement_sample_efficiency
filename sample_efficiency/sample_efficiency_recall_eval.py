@@ -41,7 +41,7 @@ def main(unused_argv):
       "evaluate_with_decodings.evaluation_fn = @recall",
       "evaluate_with_decodings.postprocess_fn = @mean_representation",
       "evaluate_with_decodings.random_seed = 0",
-      "dataset.name='3dshapes'",
+      "dataset.name='3dshapes_model_s100'",
       "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3]",
   ]

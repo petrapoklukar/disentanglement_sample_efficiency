@@ -43,7 +43,8 @@ def compute_recall(ground_truth_data,
     artifact_dir: Optional path to directory where artifacts can be saved.
   """
   del artifact_dir
-  
+  train_ground_truth_data, test_ground_truth_data = ground_truth_data
+  ground_truth_data = train_ground_truth_data
   # Samples from the prior
   observation_shape = [1] + ground_truth_data.observation_shape()
   print(observation_shape)
