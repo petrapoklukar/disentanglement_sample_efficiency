@@ -102,7 +102,7 @@ def evaluate(model_dir,
       gin.bind_parameter("dataset.name", gin_dict["dataset.name"].replace(
           "'", ""))
   dataset = named_data.get_named_ground_truth_data()
-  print(dataset.name)
+  print(dataset[0].name, dataset[1].name)
   
   # Path to TFHub module of previously trained model.
   module_path = os.path.join(model_dir, "tfhub")
