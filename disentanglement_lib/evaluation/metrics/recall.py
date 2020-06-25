@@ -49,10 +49,9 @@ def compute_recall(ground_truth_data,
   dummy_input = ground_truth_data.sample_observations(1, random_state)
   dummy_mean, dummy_var = encoder_fn(dummy_input)
   # Samples from the prior
-  print(dummy_mean.shape)
   latent_dim = repr_transform_fn(*encoder_fn(dummy_input)).shape[-1]
   latent_shape = [num_recall_samples, latent_dim]
-  print(latent_shape)
+
   
   sess = tf.Session()
   with sess.as_default():
@@ -65,24 +64,18 @@ def compute_recall(ground_truth_data,
     generated_prior_samples = generated_prior_samples.reshape(num_recall_samples, -1)
     generated_pca = PCA(n_components=n_comp)
     reduced_generated_prior_samples = generated_pca.fit_transform(generated_prior_samples)
-    print(reduced_generated_prior_samples.shape)
     
     # Sample ground truth data
     gt_samples = ground_truth_data.sample_observations(num_recall_samples, random_state)
-    print(gt_samples.shape)
     decoded_gt_samples = decoder_fn(repr_transform_fn(*encoder_fn(gt_samples)))
-    print('decoded_gt_samples', decoded_gt_samples.shape)
     
     decoded_gt_samples = decoded_gt_samples.reshape(num_recall_samples, -1)
     decoded_gt_pca = PCA(n_components=n_comp)
     reduced_decoded_gt_samples = decoded_gt_pca.fit_transform(decoded_gt_samples)
-    print(reduced_decoded_gt_samples.shape)
 
     gt_samples = gt_samples.reshape(num_recall_samples, -1)
-    print('gt_samples', gt_samples.shape)  
     gt_pca = PCA(n_components=n_comp)
     reduced_gt_samples = gt_pca.fit_transform(gt_samples)
-    print(reduced_gt_samples.shape)
 
     # compute model recall: gt vs generated
     gt_generated_result = iprd.knn_precision_recall_features(
