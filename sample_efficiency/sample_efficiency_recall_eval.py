@@ -30,10 +30,9 @@ flags.DEFINE_integer("rng", 0,
 
 def main(unused_argv):
   base_path = "3dshapes_models"
-  print(FLAGS.model, FLAGS.dataset, FLAGS.rng)
+
   print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
   vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
-#  vae_path = os.path.join(base_path, FLAGS.model)
   model_path = os.path.join(vae_path, "model")
   print(vae_path, model_path)
   
@@ -56,7 +55,7 @@ def main(unused_argv):
       "evaluate_with_decodings.evaluation_fn = @recall",
       "evaluate_with_decodings.postprocess_fn = @mean_representation",
       "evaluate_with_decodings.random_seed = 0",
-      "dataset.name='3dshapes_model_s1000'",
+      "dataset.name = '%s'" %(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng)),
       "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3, 5]",
       "recall.num_interventions_per_latent_dim = 5"
