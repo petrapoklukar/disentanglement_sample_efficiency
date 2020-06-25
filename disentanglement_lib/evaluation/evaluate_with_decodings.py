@@ -135,6 +135,7 @@ def evaluate(model_dir,
       artifact_dir = os.path.join(model_dir, "artifacts")
       results_dict = evaluation_fn(
           dataset,
+          _gaussian_encoder,
           transform_fn,
           _decoder,
           random_state=np.random.RandomState(random_seed),
@@ -147,6 +148,7 @@ def evaluate(model_dir,
           "future versions.", DeprecationWarning)
       results_dict = evaluation_fn(
           dataset,
+          _gaussian_encoder,
           transform_fn,
           _decoder,
           random_state=np.random.RandomState(random_seed))

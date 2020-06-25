@@ -23,10 +23,11 @@ from sklearn.decomposition import PCA
 
 @gin.configurable(
     "recall",
-    blacklist=["ground_truth_data", "encoder_fn", "decoder_fn", "random_state",
-               "artifact_dir"])
+    blacklist=["ground_truth_data", "encoder_fn", "repr_transform_fn",
+               "decoder_fn", "random_state", "artifact_dir"])
 def compute_recall(ground_truth_data,
                    encoder_fn, 
+                   repr_transform_fn,
                    decoder_fn,
                    random_state,
                    artifact_dir=None,
@@ -46,10 +47,13 @@ def compute_recall(ground_truth_data,
   train_ground_truth_data, test_ground_truth_data = ground_truth_data
   ground_truth_data = train_ground_truth_data
   # Samples from the prior
-  observation_shape = [1] + ground_truth_data.observation_shape
+  observation_shape = [1] + ground_truth_data.observation_shape # [1, 64, 64, 3]
   print(observation_shape)
   dummy_input = tf.ones(observation_shape, tf.int32)
-  latent_shape = [num_recall_samples, int(encoder_fn(dummy_input).shape[-1])]
+  print(encoder_fn(dummy_input).shape)
+  dummy_repr = repr_transform_fn(encoder_fn(dummy_input))
+  print(dummy_repr.shape)
+  latent_shape = [num_recall_samples, int(dummy_repr.shape[-1])]
   print(latent_shape)
   latent_prior_samples = tf.random_normal(latent_shape, 0, 1)
   print(latent_prior_samples.shape)
