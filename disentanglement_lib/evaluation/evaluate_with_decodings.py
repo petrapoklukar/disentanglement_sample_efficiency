@@ -114,6 +114,7 @@ def evaluate(model_dir,
       # Convert to numpy arrays and return.
       return np.array(output["mean"]), np.array(output["logvar"])
     
+    
     def _decoder(z):
       """Encodes images using trained model."""
       # Push images through the TFHub module.

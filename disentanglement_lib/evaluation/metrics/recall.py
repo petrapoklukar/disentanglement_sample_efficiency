@@ -62,7 +62,7 @@ def compute_recall(ground_truth_data,
 
     # Generated samples
     generated_prior_samples = decoder_fn(latent_prior_samples)
-    generated_prior_samples = generated_prior_samples.eval().reshape(num_recall_samples, -1)
+    generated_prior_samples = generated_prior_samples.reshape(num_recall_samples, -1)
     generated_pca = PCA(n_components=n_comp)
     reduced_generated_prior_samples = generated_pca.fit_transform(generated_prior_samples)
     print(reduced_generated_prior_samples.shape)
@@ -73,12 +73,12 @@ def compute_recall(ground_truth_data,
     decoded_gt_samples = decoder_fn(repr_transform_fn(*encoder_fn(gt_samples)))
     print('decoded_gt_samples', decoded_gt_samples.shape)
     
-    decoded_gt_samples = decoded_gt_samples.eval().reshape(num_recall_samples, -1)
+    decoded_gt_samples = decoded_gt_samples.reshape(num_recall_samples, -1)
     decoded_gt_pca = PCA(n_components=n_comp)
     reduced_decoded_gt_samples = decoded_gt_pca.fit_transform(decoded_gt_samples)
     print(reduced_decoded_gt_samples.shape)
 
-    gt_samples = gt_samples.eval().reshape(num_recall_samples, -1)
+    gt_samples = gt_samples.reshape(num_recall_samples, -1)
     print('gt_samples', gt_samples.shape)  
     gt_pca = PCA(n_components=n_comp)
     reduced_gt_samples = gt_pca.fit_transform(gt_samples)
