@@ -49,7 +49,7 @@ def compute_recall(ground_truth_data,
   # Samples from the prior
   observation_shape = [1] + ground_truth_data.observation_shape # [1, 64, 64, 3]
   print(observation_shape)
-  dummy_input = tf.ones(observation_shape, tf.int32)
+  dummy_input = tf.ones(ground_truth_data.observation_shape, tf.int32)
 #  dummy_input2 = tf.ones([None] + ground_truth_data.observation_shape, tf.int32)
 #  print(encoder_fn(dummy_input2).shape)
   print(encoder_fn(dummy_input).shape)
