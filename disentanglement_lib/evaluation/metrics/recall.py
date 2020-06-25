@@ -98,7 +98,8 @@ def compute_recall(ground_truth_data,
       fix_one_latent_from_prior_samples = np.copy(latent_prior_samples_np)
       fix_one_latent_from_prior_samples[:, dim] = latent_intervention
       # decode the samples and trasform them with the PCA
-      gen_fix_one_latent_from_prior_samples = decoder_fn(fix_one_latent_from_prior_samples)
+      gen_fix_one_latent_from_prior_samples = decoder_fn(
+          fix_one_latent_from_prior_samples).reshape(num_recall_samples, -1)
       reduced_gen_fix_one_latent_from_prior_samples = generated_pca.transform(
           gen_fix_one_latent_from_prior_samples)
       
@@ -127,7 +128,8 @@ def compute_recall(ground_truth_data,
       fix_all_but_one_from_prior_samples = np.full(latent_shape, latent_intervention)
       fix_all_but_one_from_prior_samples[:, dim] = dim_latent_prior_samples
       # decode the samples and trasform them with the PCA
-      gen_fix_all_but_one_latent_from_prior_samples = decoder_fn(fix_all_but_one_from_prior_samples)
+      gen_fix_all_but_one_latent_from_prior_samples = decoder_fn(
+          fix_all_but_one_from_prior_samples).reshape(num_recall_samples, -1)
       reduced_gen_fix_all_but_one_latent_from_prior_samples = generated_pca.transform(
           gen_fix_all_but_one_latent_from_prior_samples)
       
