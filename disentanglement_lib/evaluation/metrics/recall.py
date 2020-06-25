@@ -96,6 +96,7 @@ def compute_recall(ground_truth_data,
       'gt_generated_result': gt_generated_result,
       'decoded_gt_generated_result': decoded_gt_generated_result
       }
+  print(result_d)
   return result_d
     
   
