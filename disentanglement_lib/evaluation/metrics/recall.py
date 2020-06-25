@@ -63,7 +63,7 @@ def compute_recall(ground_truth_data,
     # Generated samples
     generated_prior_samples = decoder_fn(latent_prior_samples)
     print(generated_prior_samples.shape)
-    n_comp = min(generated_prior_samples.eval().shape[0], 1000)
+    n_comp = min(generated_prior_samples.shape[0], 1000)
     print(n_comp)
     generated_prior_samples = tf.reshape(generated_prior_samples, [num_recall_samples, -1]).eval()
     generated_pca = PCA(n_components=n_comp)
