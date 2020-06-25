@@ -51,16 +51,15 @@ def compute_recall(ground_truth_data,
   # Samples from the prior
   latent_dim = repr_transform_fn(*encoder_fn(dummy_input)).shape[-1]
   latent_shape = [num_recall_samples, latent_dim]
-
+  latent_prior_samples_np = np.random.normal(size=latent_shape)
+  
   result_d = {'nhoods': nhood_sizes}
   sess = tf.Session()
   with sess.as_default():
     n_comp = min(num_recall_samples, 1000)
-    latent_prior_samples = tf.random_normal(
-        latent_shape, 0, 1, name="decoder/latent_vectors").eval() # [num_recall_samples, 64, 64, 3]
 
     # Generated samples
-    generated_prior_samples = decoder_fn(latent_prior_samples)
+    generated_prior_samples = decoder_fn(latent_prior_samples_np)
     generated_prior_samples = generated_prior_samples.reshape(num_recall_samples, -1)
     generated_pca = PCA(n_components=n_comp)
     reduced_generated_prior_samples = generated_pca.fit_transform(generated_prior_samples)
@@ -68,7 +67,6 @@ def compute_recall(ground_truth_data,
     # Sample ground truth data
     gt_samples = ground_truth_data.sample_observations(num_recall_samples, random_state)
     decoded_gt_samples = decoder_fn(repr_transform_fn(*encoder_fn(gt_samples)))
-    
     decoded_gt_samples = decoded_gt_samples.reshape(num_recall_samples, -1)
     decoded_gt_pca = PCA(n_components=n_comp)
     reduced_decoded_gt_samples = decoded_gt_pca.fit_transform(decoded_gt_samples)
@@ -79,23 +77,78 @@ def compute_recall(ground_truth_data,
 
     # compute model recall: gt vs generated
     gt_generated_result = iprd.knn_precision_recall_features(
-                                  reduced_gt_samples, 
-                                  reduced_generated_prior_samples, 
-                                  nhood_sizes=nhood_sizes,
-                                  row_batch_size=500, col_batch_size=100, 
-                                  num_gpus=1)
+        reduced_gt_samples, 
+        reduced_generated_prior_samples, 
+        nhood_sizes=nhood_sizes,
+        row_batch_size=500, col_batch_size=100, num_gpus=1)
     update_result_dict(result_d, ['gt_generated_', gt_generated_result])
     
     # compute model recall: model(gt) vs generated
     decoded_gt_generated_result = iprd.knn_precision_recall_features(
-                                  reduced_decoded_gt_samples, 
-                                  reduced_generated_prior_samples, 
-                                  nhood_sizes=nhood_sizes,
-                                  row_batch_size=500, col_batch_size=100, 
-                                  num_gpus=1)
+        reduced_decoded_gt_samples, 
+        reduced_generated_prior_samples, 
+        nhood_sizes=nhood_sizes,
+        row_batch_size=500, col_batch_size=100, num_gpus=1)
     update_result_dict(result_d, ['decoded_gt_generated_', decoded_gt_generated_result])
+    
+    for dim in latent_dim:
+      # intervene, get decodings
+      # --- fix one, vary the rest
+      latent_intervention = np.random.normal()
+      fix_one_latent_from_prior_samples = np.copy(latent_prior_samples_np)
+      fix_one_latent_from_prior_samples[:, dim] = latent_intervention
+      # decode the samples and trasform them with the PCA
+      gen_fix_one_latent_from_prior_samples = decoder_fn(fix_one_latent_from_prior_samples)
+      reduced_gen_fix_one_latent_from_prior_samples = generated_pca.transform(
+          gen_fix_one_latent_from_prior_samples)
       
-  print(result_d)
+      # Calculate the relative recall
+      fix_one_vs_prior_generated_result = iprd.knn_precision_recall_features(
+          reduced_generated_prior_samples, 
+          reduced_gen_fix_one_latent_from_prior_samples,
+          nhood_sizes=nhood_sizes,
+          row_batch_size=500, col_batch_size=100, num_gpus=1)
+      update_result_dict(
+          result_d, 
+          ['fix_one_vs_prior_generated_', fix_one_vs_prior_generated_result])
+      
+      fix_one_vs_prior_decoded_gt_result = iprd.knn_precision_recall_features(
+          reduced_decoded_gt_samples, 
+          reduced_gen_fix_one_latent_from_prior_samples,
+          nhood_sizes=nhood_sizes,
+          row_batch_size=500, col_batch_size=100, num_gpus=1)
+      update_result_dict(
+          result_d, 
+          ['fix_one_vs_prior_decoded_gt_', fix_one_vs_prior_decoded_gt_result])
+      
+      
+      # --- vary one, fix the rest
+      dim_latent_prior_samples = np.copy(latent_prior_samples_np[:, dim])
+      fix_all_but_one_from_prior_samples = np.full(latent_shape, latent_intervention)
+      fix_all_but_one_from_prior_samples[:, dim] = dim_latent_prior_samples
+      # decode the samples and trasform them with the PCA
+      gen_fix_all_but_one_latent_from_prior_samples = decoder_fn(fix_all_but_one_from_prior_samples)
+      reduced_gen_fix_all_but_one_latent_from_prior_samples = generated_pca.transform(
+          gen_fix_all_but_one_latent_from_prior_samples)
+      
+      # calculate the recall
+      fix_all_but_one_vs_prior_generated_result = iprd.knn_precision_recall_features(
+          reduced_generated_prior_samples, 
+          reduced_gen_fix_all_but_one_latent_from_prior_samples,
+          nhood_sizes=nhood_sizes,
+          row_batch_size=500, col_batch_size=100, num_gpus=1)
+      update_result_dict(
+          result_d, 
+          ['fix_all_but_one_vs_prior_generated_', fix_all_but_one_vs_prior_generated_result])
+      
+      fix_all_but_one_vs_prior_decoded_gt_result = iprd.knn_precision_recall_features(
+          reduced_decoded_gt_samples, 
+          reduced_gen_fix_all_but_one_latent_from_prior_samples,
+          nhood_sizes=nhood_sizes,
+          row_batch_size=500, col_batch_size=100, num_gpus=1)
+      update_result_dict(
+          result_d, 
+          ['fix_all_but_one_vs_prior_decoded_gt_', fix_all_but_one_vs_prior_decoded_gt_result])
   return result_d
     
 
