@@ -112,7 +112,7 @@ def evaluate(model_dir,
       # Push images through the TFHub module.
       output = f(dict(images=x), signature="gaussian_encoder", as_dict=True)
       # Convert to numpy arrays and return.
-      return {key: np.array(values) for key, values in output.items()}
+      return np.array(output["mean"]), np.array(output["logvar"])
     
     def _decoder(z):
       """Encodes images using trained model."""
