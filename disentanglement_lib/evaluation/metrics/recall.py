@@ -91,7 +91,7 @@ def compute_recall(ground_truth_data,
         row_batch_size=500, col_batch_size=100, num_gpus=1)
     update_result_dict(result_d, ['decoded_gt_generated_', decoded_gt_generated_result])
     
-    for dim in latent_dim:
+    for dim in range(latent_dim):
       # intervene, get decodings
       # --- fix one, vary the rest
       latent_intervention = np.random.normal()
