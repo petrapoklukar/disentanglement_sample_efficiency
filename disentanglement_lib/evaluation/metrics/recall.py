@@ -46,7 +46,7 @@ def compute_recall(ground_truth_data,
   train_ground_truth_data, test_ground_truth_data = ground_truth_data
   ground_truth_data = train_ground_truth_data
   # Samples from the prior
-  observation_shape = [1] + ground_truth_data.observation_shape()
+  observation_shape = [1] + ground_truth_data.observation_shape
   print(observation_shape)
   dummy_input = tf.ones(observation_shape, tf.int32)
   latent_shape = [num_recall_samples, int(encoder_fn(dummy_input).shape[-1])]
