@@ -154,6 +154,11 @@ def evaluate(model_dir,
           _decoder,
           random_state=np.random.RandomState(random_seed))
 
+  print(results_dict)
+  for k, v in results_dict.items():
+    print(type(k))
+    print(type(v))
+
   # Save the results (and all previous results in the pipeline) on disk.
   original_results_dir = os.path.join(model_dir, "results")
   results_dir = os.path.join(output_dir, "results")
