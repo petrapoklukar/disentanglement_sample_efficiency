@@ -52,7 +52,7 @@ def compute_recall(ground_truth_data,
   latent_dim = repr_transform_fn(*encoder_fn(dummy_input)).shape[-1]
   latent_shape = [num_recall_samples, latent_dim]
 
-  
+  result_d = {'nhoods': nhood_sizes}
   sess = tf.Session()
   with sess.as_default():
     n_comp = min(num_recall_samples, 1000)
@@ -84,6 +84,7 @@ def compute_recall(ground_truth_data,
                                   nhood_sizes=nhood_sizes,
                                   row_batch_size=500, col_batch_size=100, 
                                   num_gpus=1)
+    update_result_dict(result_d, ['gt_generated_', gt_generated_result])
     
     # compute model recall: model(gt) vs generated
     decoded_gt_generated_result = iprd.knn_precision_recall_features(
@@ -92,13 +93,18 @@ def compute_recall(ground_truth_data,
                                   nhood_sizes=nhood_sizes,
                                   row_batch_size=500, col_batch_size=100, 
                                   num_gpus=1)
-  result_d = {
-      'gt_generated_result': gt_generated_result,
-      'decoded_gt_generated_result': decoded_gt_generated_result
-      }
+    update_result_dict(result_d, ['decoded_gt_generated_', decoded_gt_generated_result])
+      
   print(result_d)
   return result_d
     
-  
-  
+
+def update_result_dict(result_d, *args):
+  for arg in args:
+    print(arg)
+    update_key = arg[0]
+    update_d = {update_key + key: value for key, value in arg[1].items()}
+    result_d.update(update_d)
+  return result_d
+   
  
