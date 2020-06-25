@@ -56,9 +56,9 @@ def main(unused_argv):
       "evaluate_with_decodings.postprocess_fn = @mean_representation",
       "evaluate_with_decodings.random_seed = 0",
       "dataset.name = '%s'" %(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng)),
-      "recall.num_recall_samples = 100",
+#      "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3, 5]",
-      "recall.num_interventions_per_latent_dim = 5"
+      "recall.num_interventions_per_latent_dim = 20"
   ]
   result_path = os.path.join(vae_path, "metrics", "test_recall_100")
   evaluate_with_decodings.evaluate_with_gin(

@@ -31,7 +31,7 @@ def compute_recall(ground_truth_data,
                    decoder_fn,
                    random_state,
                    artifact_dir=None,
-                   num_recall_samples=gin.REQUIRED,
+#                   num_recall_samples=gin.REQUIRED,
                    nhood_sizes=gin.REQUIRED,
                    num_interventions_per_latent_dim=gin.REQUIRED
                    ):
@@ -47,6 +47,7 @@ def compute_recall(ground_truth_data,
   del artifact_dir
   train_ground_truth_data, test_ground_truth_data = ground_truth_data
   ground_truth_data = train_ground_truth_data
+  num_recall_samples = train_ground_truth_data.data_size
   dummy_input = ground_truth_data.sample_observations(1, random_state)
   dummy_mean, dummy_var = encoder_fn(dummy_input)
   # Samples from the prior
