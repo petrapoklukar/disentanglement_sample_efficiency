@@ -168,7 +168,7 @@ def compute_recall(ground_truth_data,
         agg_recall_dict(agg_fix_all_but_one_vs_prior_decoded_gt_result, 
                         fix_all_but_one_vs_prior_decoded_gt_result,
                         intervention)
-      update_result_dict(
+      update_result_dict_with_agg(
           result_d, 
           [str(dim) + '_fix_one_vs_prior_generated_', agg_fix_one_vs_prior_generated_result],
           [str(dim) + '_fix_one_vs_prior_decoded_gt_', agg_fix_one_vs_prior_decoded_gt_result],
@@ -178,6 +178,13 @@ def compute_recall(ground_truth_data,
     
 
 def update_result_dict(result_d, *args):
+  for arg in args:
+    update_key = arg[0]
+    update_d = {update_key + key: list(value) for key, value in arg[1].items()}
+    result_d.update(update_d)
+  return result_d
+
+def update_result_dict_with_agg(result_d, *args):
   for arg in args:
     update_key = arg[0]
     update_d = {update_key + key: list(np.mean(value, axis=0)) for key, value in arg[1].items()}
