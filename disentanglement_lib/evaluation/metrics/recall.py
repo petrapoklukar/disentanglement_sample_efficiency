@@ -59,6 +59,7 @@ def compute_recall(ground_truth_data,
   with sess.as_default():
     n_comp = min(num_recall_samples, 1000)
 
+    print('\n\n\n Computing the total recall...')
     # Generated samples
     generated_prior_samples = decoder_fn(latent_prior_samples_np)
     generated_prior_samples = generated_prior_samples.reshape(num_recall_samples, -1)
@@ -96,6 +97,7 @@ def compute_recall(ground_truth_data,
     
     # Pick a latent dimension
     for dim in range(latent_dim):
+      print('\n\n\n Computing the recall for latent dim ', dim)
       # randomly intervene several times
       agg_fix_one_vs_prior_generated_result = {'precision': [], 'recall': []}
       agg_fix_one_vs_prior_decoded_gt_result = {'precision': [], 'recall': []}
@@ -103,6 +105,7 @@ def compute_recall(ground_truth_data,
       agg_fix_all_but_one_vs_prior_decoded_gt_result =  {'precision': [], 'recall': []}
       
       for intervention in range(num_interventions_per_latent_dim):
+        print('n\n\n Intervention num', intervention)
         # --- fix one, vary the rest
         latent_intervention = np.random.normal()
         fix_one_latent_from_prior_samples = np.copy(latent_prior_samples_np)
@@ -165,7 +168,6 @@ def compute_recall(ground_truth_data,
         agg_recall_dict(agg_fix_all_but_one_vs_prior_decoded_gt_result, 
                         fix_all_but_one_vs_prior_decoded_gt_result,
                         intervention)
-
       update_result_dict(
           result_d, 
           [str(dim) + '_fix_one_vs_prior_generated_', agg_fix_one_vs_prior_generated_result],
