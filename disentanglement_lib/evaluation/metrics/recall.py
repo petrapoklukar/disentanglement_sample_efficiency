@@ -57,14 +57,16 @@ def compute_recall(ground_truth_data,
   
   sess = tf.Session()
   with sess.as_default():
-    latent_prior_samples = tf.random_normal(latent_shape, 0, 1, name="decoder/latent_vectors").eval()
-    print(latent_prior_samples.shape)
+    latent_prior_samples = tf.random_normal(
+        latent_shape, 0, 1, name="decoder/latent_vectors").eval() # [num_recall_samples, 64, 64, 3]
 
     # Generated samples
     generated_prior_samples = decoder_fn(latent_prior_samples)
     print(generated_prior_samples.shape)
+    n_comp = min(generated_prior_samples.eval().shape[0], 1000)
+    print(n_comp)
     generated_prior_samples = tf.reshape(generated_prior_samples, [num_recall_samples, -1]).eval()
-    generated_pca = PCA(n_components=1000)
+    generated_pca = PCA(n_components=n_comp)
     reduced_generated_prior_samples = generated_pca.fit_transform(generated_prior_samples)
     
     # Sample ground truth data
@@ -74,12 +76,12 @@ def compute_recall(ground_truth_data,
     print(decoded_gt_samples.shape)
     
     decoded_gt_samples = tf.reshape(decoded_gt_samples, [num_recall_samples, -1]).eval()
-    decoded_gt_pca = PCA(n_components=1000)
+    decoded_gt_pca = PCA(n_components=n_comp)
     reduced_decoded_gt_samples = decoded_gt_pca.fit_transform(decoded_gt_samples)
 
     gt_samples = tf.reshape(gt_samples, [num_recall_samples, -1]).eval()
     print(gt_samples.shape)  
-    gt_pca = PCA(n_components=1000)
+    gt_pca = PCA(n_components=n_comp)
     reduced_gt_samples = gt_pca.fit_transform(gt_samples)
 
     # compute model recall: gt vs generated
