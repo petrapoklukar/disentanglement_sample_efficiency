@@ -60,7 +60,7 @@ def compute_recall(ground_truth_data,
   # Ground truth samples 
   gt_train_samples = ground_truth_data.sample_observations(num_recall_samples, random_state)
   gt_train_repr = repr_transform_fn(*encoder_fn(gt_train_samples))
-  gt_train_repr_mean = np.mean(gt_train_repr, axis=0)
+  gt_train_repr_mean = np.mean(gt_train_repr, axis=0) # latent_shape
   gt_train_repr_std = np.std(gt_train_repr, axis=0)
   gt_train_repr_min = np.min(gt_train_repr, axis=0)
   gt_train_repr_max = np.max(gt_train_repr, axis=0)
@@ -297,6 +297,7 @@ def update_result_dict(result_d, *args):
 
 def update_result_dict_with_agg(result_d, *args):
   for arg in args:
+    print(arg)
     update_key = arg[0]
     update_d = {update_key + key: list(np.mean(value, axis=0)) for key, value in arg[1].items()}
     if 'fix_one' and 'recall' in update_key:
