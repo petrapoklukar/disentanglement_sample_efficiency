@@ -156,7 +156,7 @@ def evaluate(model_dir,
 
   # Save the results (and all previous results in the pipeline) on disk.
   recall_results_dict = {k: v for k, v in results_dict.items() if 'recall' in k}
-  
+  print(recall_results_dict)
   original_results_dir = os.path.join(model_dir, "results")
   results_dir = os.path.join(output_dir, "results")
   results_dict["elapsed_time"] = time.time() - experiment_timer

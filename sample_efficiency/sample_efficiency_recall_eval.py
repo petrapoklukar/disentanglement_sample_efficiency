@@ -43,11 +43,11 @@ def main(unused_argv):
             "split_train_and_validation.random_seed = %d" %(FLAGS.rng)
       ]
 
-  preprocess.preprocess_with_gin(FLAGS.dataset,
-                                 FLAGS.model,
-                                 overwrite=FLAGS.overwrite,
-                                 gin_config_files=None,
-                                 gin_bindings=preproces_gin_bindings)
+#  preprocess.preprocess_with_gin(FLAGS.dataset,
+#                                 FLAGS.model,
+#                                 overwrite=FLAGS.overwrite,
+#                                 gin_config_files=None,
+#                                 gin_bindings=preproces_gin_bindings)
   print("\n\n*- Preprocessing DONE \n\n")
 
   print("\n\n*- Evaluating Recall.")
