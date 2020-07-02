@@ -298,10 +298,13 @@ def update_result_dict(result_d, *args):
 
 def update_result_dict_with_agg(result_d, *args):
   for arg in args:
-    print(arg)
     update_key = arg[0]
-    update_d = {update_key + key: list(np.mean(value, axis=0)) for key, value in arg[1].items()}
-    update_d = {update_key + 'recall_sum': list(np.sum(arg[1]['recall'], axis=0))}
+    update_recall = arg[1]['recall']
+#    update_d = {update_key + 'recall_mean': list(np.mean(value, axis=0)) for key, value in arg[1].items()}
+    update_d = {update_key + 'recall_mean': list(np.mean(update_recall, axis=0)),
+                update_key + 'recall_std': list(np.std(update_recall, axis=0)),
+                update_key + 'recall_sum': list(np.sum(update_recall, axis=0))
+                }
     result_d.update(update_d)
   return result_d
 
