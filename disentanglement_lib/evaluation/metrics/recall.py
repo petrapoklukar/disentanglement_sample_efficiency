@@ -301,7 +301,7 @@ def update_result_dict_with_agg(result_d, *args):
     print(arg)
     update_key = arg[0]
     update_d = {update_key + key: list(np.mean(value, axis=0)) for key, value in arg[1].items()}
-    if 'fix_one' and 'recall' in update_key:
+    if 'fix_one' in update_key:
       update_d = {update_key + key + '_sum': list(np.sum(value, axis=0)) for key, value in arg[1]['recall']}
     result_d.update(update_d)
   return result_d
