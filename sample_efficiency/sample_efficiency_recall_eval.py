@@ -58,14 +58,14 @@ def main(unused_argv):
       "dataset.name = '%s'" %(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng)),
 #      "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3, 5]",
-      "recall.num_interventions_per_latent_dim = 2" #20
+      "recall.num_interventions_per_latent_dim = 20"
   ]
-  result_path = os.path.join(vae_path, "metrics", "test_test_recall")
+  result_path = os.path.join(vae_path, "metrics", "recall_20interventions")
   evaluate_with_decodings.evaluate_with_gin(
       model_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
-  # preprocess.destroy_train_and_validation_splits(
-  #     FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
+  preprocess.destroy_train_and_validation_splits(
+      FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
   print("\n\n*- Evaluation COMPLETED \n\n")
 
 

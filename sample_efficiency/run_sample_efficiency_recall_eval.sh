@@ -13,7 +13,7 @@ declare -a modelArr=(
 #	"bvae"
 #	"fvae"
 #	"btcvae"
-#	"annvae"
+	"annvae"
 )
 
 declare -a datasetArr=(

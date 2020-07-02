@@ -47,8 +47,7 @@ def compute_recall(ground_truth_data,
   del artifact_dir
   train_ground_truth_data, test_ground_truth_data = ground_truth_data
   ground_truth_data = train_ground_truth_data
-#  num_recall_samples = train_ground_truth_data.data_size
-  num_recall_samples = 10
+  num_recall_samples = train_ground_truth_data.data_size
   dummy_input = ground_truth_data.sample_observations(1, random_state)
   dummy_mean, dummy_var = encoder_fn(dummy_input)
   
@@ -64,8 +63,6 @@ def compute_recall(ground_truth_data,
   gt_train_repr_std = np.std(gt_train_repr, axis=0)
   gt_train_repr_min = np.min(gt_train_repr, axis=0)
   gt_train_repr_max = np.max(gt_train_repr, axis=0)
-  
-  print('\n\n\n ', gt_train_repr_mean.shape, gt_train_repr_std.shape)
   
   # The predetermined set of interventions from the estimated training prior
   fixed_trained_prior_samples_np = np.random.normal(loc=gt_train_repr_mean, 
