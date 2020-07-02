@@ -47,7 +47,8 @@ def compute_recall(ground_truth_data,
   del artifact_dir
   train_ground_truth_data, test_ground_truth_data = ground_truth_data
   ground_truth_data = train_ground_truth_data
-  num_recall_samples = train_ground_truth_data.data_size
+#  num_recall_samples = train_ground_truth_data.data_size
+  num_recall_samples = 10
   dummy_input = ground_truth_data.sample_observations(1, random_state)
   dummy_mean, dummy_var = encoder_fn(dummy_input)
   
