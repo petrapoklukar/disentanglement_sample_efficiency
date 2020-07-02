@@ -71,8 +71,13 @@ def compute_recall(ground_truth_data,
   fixed_trained_prior_samples_np = np.random.normal(loc=gt_train_repr_mean, 
                                               scale=gt_train_repr_std, 
                                               size=latent_shape)
+  print(fixed_trained_prior_samples_np.shape, fixed_trained_prior_samples_np)
   
-  result_d = {'nhoods': nhood_sizes}
+  result_d = {'nhoods': nhood_sizes, 
+              'gt_train_repr_mean': gt_train_repr_mean, 
+              'gt_train_repr_std': gt_train_repr_std, 
+              'gt_train_repr_min': gt_train_repr_min, 
+              'gt_train_repr_max': gt_train_repr_max}
   sess = tf.Session()
   with sess.as_default():
     n_comp = min(num_recall_samples, 1000)
@@ -94,6 +99,7 @@ def compute_recall(ground_truth_data,
     generated_trained_prior_samples = decoder_fn(fixed_trained_prior_samples_np)
     generated_trained_prior_samples = generated_trained_prior_samples.reshape(num_recall_samples, -1)
     reduced_generated_trained_prior_samples = decoded_gt_pca.transform(generated_trained_prior_samples)
+    assert(reduced_generated_prior_samples.shape == reduced_generated_trained_prior_samples.shape)
     
     # --- Original sharp images - discarded to now 
 #    gt_train_samples = gt_samples.reshape(num_recall_samples, -1)
@@ -127,13 +133,25 @@ def compute_recall(ground_truth_data,
         row_batch_size=500, col_batch_size=100, num_gpus=1)
     update_result_dict(result_d, ['decoded_gt_trained_prior_generated_', 
                                   decoded_gt_trained_prior_generated_result])
+  
+    # compute model recall:normal prior generated vs estimated training prior generated
+    prior_generated_trained_prior_generated_result = iprd.knn_precision_recall_features(
+        reduced_generated_prior_samples, 
+        reduced_generated_trained_prior_samples, 
+        nhood_sizes=nhood_sizes,
+        row_batch_size=500, col_batch_size=100, num_gpus=1)
+    update_result_dict(result_d, ['prior_generated_trained_prior_generated_', 
+                                  prior_generated_trained_prior_generated_result])
     
+    # Choose a subset of interventions
     subset_interventions = np.random.choice(
-          np.arange(num_recall_samples), size=num_interventions_per_latent_dim, replace=False)
+          np.arange(num_recall_samples), size=num_interventions_per_latent_dim, 
+          replace=False)
+    
     # Pick a latent dimension
     for dim in range(latent_dim):
       print('\n\n\n Computing the recall for latent dim ', dim)
-      # randomly intervene several times
+      
       agg_fix_one_vs_prior_generated_result = {'precision': [], 'recall': []}
       agg_fix_one_vs_trained_prior_generated_result = {'precision': [], 'recall': []}
       agg_fix_one_vs_decoded_gt_result = {'precision': [], 'recall': []}
@@ -142,6 +160,7 @@ def compute_recall(ground_truth_data,
       agg_vary_one_vs_trained_prior_generated_result = {'precision': [], 'recall': []}
       agg_vary_one_vs_decoded_gt_result =  {'precision': [], 'recall': []}
       
+      # intervene several times
       for intervention in range(num_interventions_per_latent_dim):
         inter_id = subset_interventions[intervention]
         print('n\n\n Intervention num', intervention)
@@ -280,7 +299,7 @@ def update_result_dict_with_agg(result_d, *args):
   for arg in args:
     update_key = arg[0]
     update_d = {update_key + key: list(np.mean(value, axis=0)) for key, value in arg[1].items()}
-    if 'fix_one' in update_key:
+    if 'fix_one' and 'recall' in update_key:
       update_d = {update_key + key + '_sum': list(np.sum(value, axis=0)) for key, value in arg[1]['recall']}
     result_d.update(update_d)
   return result_d
