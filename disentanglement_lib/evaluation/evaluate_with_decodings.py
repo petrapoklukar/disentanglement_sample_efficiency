@@ -162,7 +162,7 @@ def evaluate(model_dir,
   results_dict["elapsed_time"] = time.time() - experiment_timer
   results.update_result_directory(results_dir, "evaluation", results_dict,
                                   original_results_dir)
-  results.update_result_directory(recall_results_dict, "recall_only_evaluation", recall_results_dict,
+  results.update_result_directory(results_dir, "recall_only_evaluation", recall_results_dict,
                                   original_results_dir)
 
 
