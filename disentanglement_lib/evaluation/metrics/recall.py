@@ -279,7 +279,7 @@ def compute_recall(ground_truth_data,
       update_result_dict_with_agg(
           result_d, 
           [str(dim) + '_fix_one_vs_prior_generated_', agg_fix_one_vs_prior_generated_result],
-          [str(dim) + '_fix_one_vs_trained_prior_generated_', fix_one_vs_trained_prior_generated_result],
+          [str(dim) + '_fix_one_vs_trained_prior_generated_', agg_fix_one_vs_trained_prior_generated_result],
           [str(dim) + '_fix_one_vs_decoded_gt_', agg_fix_one_vs_decoded_gt_result],
           [str(dim) + '_vary_one_vs_prior_generated_', agg_vary_one_vs_prior_generated_result], 
           [str(dim) + '_vary_one_vs_trained_prior_generated_', agg_vary_one_vs_trained_prior_generated_result],
