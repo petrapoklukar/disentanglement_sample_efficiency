@@ -155,10 +155,14 @@ def evaluate(model_dir,
           random_state=np.random.RandomState(random_seed))
 
   # Save the results (and all previous results in the pipeline) on disk.
+  recall_results_dict = {k: v for k, v in results_dict.items() if 'recall' in k}
+  
   original_results_dir = os.path.join(model_dir, "results")
   results_dir = os.path.join(output_dir, "results")
   results_dict["elapsed_time"] = time.time() - experiment_timer
   results.update_result_directory(results_dir, "evaluation", results_dict,
+                                  original_results_dir)
+  results.update_result_directory(recall_results_dict, "recall_only_evaluation", recall_results_dict,
                                   original_results_dir)
 
 
