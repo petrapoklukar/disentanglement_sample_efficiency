@@ -74,10 +74,10 @@ def compute_recall(ground_truth_data,
   print(fixed_trained_prior_samples_np.shape, fixed_trained_prior_samples_np)
   
   result_d = {'nhoods': nhood_sizes, 
-              'gt_train_repr_mean': gt_train_repr_mean, 
-              'gt_train_repr_std': gt_train_repr_std, 
-              'gt_train_repr_min': gt_train_repr_min, 
-              'gt_train_repr_max': gt_train_repr_max}
+              'gt_train_repr_mean': list(gt_train_repr_mean), 
+              'gt_train_repr_std': list(gt_train_repr_std), 
+              'gt_train_repr_min': list(gt_train_repr_min), 
+              'gt_train_repr_max': list(gt_train_repr_max)}
   sess = tf.Session()
   with sess.as_default():
     n_comp = min(num_recall_samples, 1000)
@@ -147,7 +147,8 @@ def compute_recall(ground_truth_data,
     subset_interventions = np.random.choice(
           np.arange(num_recall_samples), size=num_interventions_per_latent_dim, 
           replace=False)
-    
+    result_d['subset_interventions'] = list(subset_interventions)
+
     # Pick a latent dimension
     for dim in range(latent_dim):
       print('\n\n\n Computing the recall for latent dim ', dim)
