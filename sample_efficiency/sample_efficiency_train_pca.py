@@ -37,7 +37,7 @@ def main(unused_argv):
       ]
 
   preprocess.preprocess_with_gin(FLAGS.dataset,
-                                 FLAGS.model,
+                                 "dummy_name",
                                  overwrite=FLAGS.overwrite,
                                  gin_config_files=None,
                                  gin_bindings=preproces_gin_bindings)
@@ -53,7 +53,7 @@ def main(unused_argv):
       model_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
   preprocess.destroy_train_and_validation_splits(
-      FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
+      FLAGS.dataset + '_' + str(FLAGS.rng))
   print("\n\n*- Training COMPLETED \n\n")
 
 

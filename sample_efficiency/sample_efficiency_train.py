@@ -49,8 +49,8 @@ def main(unused_argv):
       print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
       preproces_gin_bindings = [
             "dataset.name = '%s'" %(FLAGS.dataset),
-            "preprocess.preprocess_fn = @split_train_and_validation",
-            "split_train_and_validation.random_seed = %d" %(FLAGS.rng)
+            "preprocess.preprocess_fn = @split_train_and_validation_per_model",
+            "split_train_and_validation_per_model.random_seed = %d" %(FLAGS.rng)
       ]
 
       preprocess.preprocess_with_gin(FLAGS.dataset,
