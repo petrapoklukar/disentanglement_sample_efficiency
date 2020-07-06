@@ -146,7 +146,7 @@ def compute_recall(ground_truth_data,
           np.arange(num_recall_samples), size=num_interventions_per_latent_dim, 
           replace=False)
     result_d['subset_interventions'] = list(subset_interventions)
-    result_d['num_pca_comp'] = list(n_comp)
+    result_d['num_pca_comp'] = n_comp
 
     # Pick a latent dimension
     for dim in range(latent_dim):
