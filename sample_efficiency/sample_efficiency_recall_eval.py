@@ -58,9 +58,10 @@ def main(unused_argv):
       "dataset.name = '%s'" %(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng)),
 #      "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3, 5]",
-      "recall.num_interventions_per_latent_dim = 20"
+      "recall.num_interventions_per_latent_dim = 20",
+      "recall.num_pca_components = 2000"
   ]
-  result_path = os.path.join(vae_path, "metrics", "recall_20interventions")
+  result_path = os.path.join(vae_path, "metrics", "recall_20interventions_pca2000")
   evaluate_with_decodings.evaluate_with_gin(
       model_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   

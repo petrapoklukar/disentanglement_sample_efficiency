@@ -33,7 +33,8 @@ def compute_recall(ground_truth_data,
                    artifact_dir=None,
 #                   num_recall_samples=gin.REQUIRED,
                    nhood_sizes=gin.REQUIRED,
-                   num_interventions_per_latent_dim=gin.REQUIRED
+                   num_interventions_per_latent_dim=gin.REQUIRED,
+                   num_pca_components=gin.REQUIRED
                    ):
   """TBA
 
@@ -77,7 +78,7 @@ def compute_recall(ground_truth_data,
               'gt_train_repr_max': list(gt_train_repr_max)}
   sess = tf.Session()
   with sess.as_default():
-    n_comp = min(num_recall_samples, 1000)
+    n_comp = min(num_recall_samples, num_pca_components)
 
     print('\n\n\n Computing the total recall...')
     # Sample ground truth data and vae process it
@@ -145,6 +146,7 @@ def compute_recall(ground_truth_data,
           np.arange(num_recall_samples), size=num_interventions_per_latent_dim, 
           replace=False)
     result_d['subset_interventions'] = list(subset_interventions)
+    result_d['num_pca_comp'] = list(n_comp)
 
     # Pick a latent dimension
     for dim in range(latent_dim):
