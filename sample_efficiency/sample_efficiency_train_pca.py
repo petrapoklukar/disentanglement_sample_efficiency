@@ -28,6 +28,8 @@ flags.DEFINE_integer("rng", 0,
 def main(unused_argv):
   base_path = "backbone"
   model_path = os.path.join(base_path, "pca")
+  if not os.path.exists(model_path):
+        os.makedirs(model_path)
   
   print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
   preproces_gin_bindings = [
