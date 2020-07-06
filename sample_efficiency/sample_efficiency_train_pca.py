@@ -25,7 +25,7 @@ flags.DEFINE_integer("rng", 0,
                      "random seed")
 
 
-def main(unused_argv):
+def main_per_model(unused_argv):
   base_path = "backbone"
   model_path = os.path.join(base_path, "pca")
   if not os.path.exists(model_path):
@@ -57,7 +57,25 @@ def main(unused_argv):
   preprocess.destroy_train_and_validation_splits(
       FLAGS.dataset + '_' + str(FLAGS.rng))
   print("\n\n*- Training COMPLETED \n\n")
+  
+  
+def main_per_dataset(unused_argv):
+  base_path = "backbone"
+  model_path = os.path.join(base_path, "pca")
+  if not os.path.exists(model_path):
+        os.makedirs(model_path)
+  
+  print("\n\n*- Training PCA.")
+  gin_bindings = [
+      "dataset.name = '%s'" %(FLAGS.dataset),
+      "train_pca.random_seed = 0",
+      "train_pca.num_pca_components = [10, 30]",#[100, 500, 1000, 2000, 4000]",
+  ]
+  pca.train_pca_with_gin(
+      model_path, FLAGS.overwrite, gin_bindings=gin_bindings)
+  print("\n\n*- Training COMPLETED \n\n")
+
 
 
 if __name__ == "__main__":
-  app.run(main)
+  app.run(main_per_dataset)

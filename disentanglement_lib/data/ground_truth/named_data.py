@@ -61,6 +61,8 @@ def get_named_ground_truth_data(name):
     return shapes3d.Shapes3D()
   elif name == "3dshapes_holdout":
     return shapes3d_partial.Shapes3DPartial(name)
+  elif name == "3dshapes_model_all":
+    return shapes3d_partial.Shapes3DPartial(name), None
   elif name[:8] == "3dshapes":
     return shapes3d_partial.Shapes3DPartial(name+'_train'), shapes3d_partial.Shapes3DPartial(name+'_valid')
   elif name == "dummy_data":
