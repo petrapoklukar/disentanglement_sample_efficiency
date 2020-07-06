@@ -59,7 +59,7 @@ def get_named_ground_truth_data(name):
     return mpi3d.MPI3D(mode="mpi3d_real")
   elif name == "3dshapes":
     return shapes3d.Shapes3D()
-  elif name == "3dshapes_holdout":
+  elif name == "3dshapes_holdout" or name == "3dshapes_pca_holdout_s5000":
     return shapes3d_partial.Shapes3DPartial(name)
   elif name == "3dshapes_model_all":
     return shapes3d_partial.Shapes3DPartial(name), None
