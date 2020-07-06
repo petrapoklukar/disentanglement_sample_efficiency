@@ -68,7 +68,7 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
                                                     size=latent_shape)
   print(fixed_trained_prior_samples_np.shape, fixed_trained_prior_samples_np)
   
-  results_per_pca_comp = []
+  pca_results_per_comp = []
   result_d_gen = {'nhoods': nhood_sizes, 
               'gt_repr_mean': list(gt_repr_mean), 
               'gt_repr_std': list(gt_repr_std), 
@@ -78,14 +78,14 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
               }
   
   for num_comp in pca_components:
-    sess = tf.Session()
-    result_d = result_d_gen.copy()
-    
     # Load the pretrained gt pca
-    print(bla)
-    with open(bla, 'rb') as f:
+    pca_path = "backbone/pca/pca_3dshapes_model_all_{0}comp.pkl".format(num_comp)
+    print(pca_path)
+    with open(pca_path, 'rb') as f:
       gt_pca = pickle.load(f)
-
+  
+    result_d = result_d_gen.copy()
+    sess = tf.Session()
     with sess.as_default():
       # Choose a subset of interventions
       subset_interventions = np.random.choice(
@@ -152,8 +152,6 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
           row_batch_size=500, col_batch_size=100, num_gpus=1)
       update_result_dict(result_d, ['prior_generated_trained_prior_generated_', 
                                     prior_generated_trained_prior_generated_result])
-      
-
   
       # Pick a latent dimension
       for dim in range(latent_dim):
@@ -291,8 +289,8 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
             [str(dim) + '_vary_one_vs_prior_generated_', agg_vary_one_vs_prior_generated_result], 
             [str(dim) + '_vary_one_vs_trained_prior_generated_', agg_vary_one_vs_trained_prior_generated_result],
             [str(dim) + '_vary_one_vs_decoded_gt_', agg_vary_one_vs_decoded_gt_result])
-      results_per_pca_comp.append(result_d)
-  return results_per_pca_comp
+    pca_results_per_comp.append(result_d)
+  return pca_results_per_comp
 
 
 @gin.configurable(
@@ -559,7 +557,7 @@ def compute_recall(ground_truth_data,
           [str(dim) + '_vary_one_vs_trained_prior_generated_', agg_vary_one_vs_trained_prior_generated_result],
           [str(dim) + '_vary_one_vs_decoded_gt_', agg_vary_one_vs_decoded_gt_result])
   print(result_d)
-  return result_d
+  return [result_d]
     
 
 def update_result_dict(result_d, *args):

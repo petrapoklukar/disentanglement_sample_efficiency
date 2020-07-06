@@ -28,7 +28,7 @@ flags.DEFINE_integer("rng", 0,
                      "random seed")
 
 
-def main(unused_argv):
+def main_per_model(unused_argv):
   base_path = "3dshapes_models"
 
   print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
@@ -59,7 +59,7 @@ def main(unused_argv):
 #      "recall.num_recall_samples = 100",
       "recall.nhood_sizes = [3, 5]",
       "recall.num_interventions_per_latent_dim = 20",
-      "recall.num_pca_components = 2000"
+      "recall.num_pca_components = [2000]"
   ]
   result_path = os.path.join(vae_path, "metrics", "recall_20interventions_pca2000")
   evaluate_with_decodings.evaluate_with_gin(
@@ -68,7 +68,32 @@ def main(unused_argv):
   preprocess.destroy_train_and_validation_splits(
       FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
   print("\n\n*- Evaluation COMPLETED \n\n")
+  
+  
+def main_per_holdout(unused_argv):
+  base_path = "3dshapes_models"
+
+  print("\n\n*- Evaluating '%s' \n\n" %(FLAGS.model))
+  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
+  model_path = os.path.join(vae_path, "model")
+  print(vae_path, model_path)
+
+  print("\n\n*- Evaluating Recall.")
+  gin_bindings = [
+      "evaluate_with_decodings.evaluation_fn = @recall_on_holdout",
+      "evaluate_with_decodings.postprocess_fn = @mean_representation",
+      "evaluate_with_decodings.random_seed = 0",
+      "dataset.name = 3dshapes_pca_holdout_s5000",
+      "recall_on_holdout.nhood_sizes = [3]",
+      "recall_on_holdout.num_interventions_per_latent_dim = 1",
+      "recall_on_holdout.pca_components = [100, 500]"
+  ]
+  result_path = os.path.join(vae_path, "metrics", "TEST_recall_TBD")
+  evaluate_with_decodings.evaluate_with_gin(
+      model_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
+  
+  print("\n\n*- Evaluation COMPLETED \n\n")
 
 
 if __name__ == "__main__":
-  app.run(main)
+  app.run(main_per_holdout)

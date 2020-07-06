@@ -63,6 +63,7 @@ def evaluate(model_dir,
              postprocess_fn=gin.REQUIRED,
              evaluation_fn=gin.REQUIRED,
              random_seed=gin.REQUIRED,
+             pca_components=gin.REQUIRED,
              name=""):
   """Loads a trained Gaussian encoder and decoder.
 
@@ -134,7 +135,7 @@ def evaluate(model_dir,
     # Computes scores of the representation based on the evaluation_fn.
     if _has_kwarg_or_kwargs(evaluation_fn, "artifact_dir"):
       artifact_dir = os.path.join(model_dir, "artifacts")
-      results_dict = evaluation_fn(
+      results_dict_list = evaluation_fn(
           dataset,
           _gaussian_encoder,
           transform_fn,
@@ -147,7 +148,7 @@ def evaluate(model_dir,
           "Evaluation function does not appear to accept an"
           " `artifact_dir` argument. This may not be compatible with "
           "future versions.", DeprecationWarning)
-      results_dict = evaluation_fn(
+      results_dict_list = evaluation_fn(
           dataset,
           _gaussian_encoder,
           transform_fn,
@@ -155,11 +156,11 @@ def evaluate(model_dir,
           random_state=np.random.RandomState(random_seed))
 
   # Save the results (and all previous results in the pipeline) on disk.
-  original_results_dir = os.path.join(model_dir, "results")
-  results_dir = os.path.join(output_dir, "results")
-  results_dict["elapsed_time"] = time.time() - experiment_timer
-  results.update_result_directory(results_dir, "evaluation", results_dict,
-                                  original_results_dir)
+  for results_dict, pca_comp in list(zip(results_dict_list, pca_components)):
+    results_dir = os.path.join(output_dir, "results")
+    results_dict["elapsed_time"] = time.time() - experiment_timer
+    filename = "evaluation_pca_{}comp".format(pca_comp)
+    results.update_result_directory(results_dir, filename, results_dict)
 
 def _has_kwarg_or_kwargs(f, kwarg):
   """Checks if the function has the provided kwarg or **kwargs."""
