@@ -77,6 +77,11 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
               'pca_components': pca_components
               }
   
+  subset_interventions = np.random.choice(
+      np.arange(num_recall_samples), size=num_interventions_per_latent_dim, 
+      replace=False)
+  result_d_gen['subset_interventions'] = list(subset_interventions)
+  
   for num_comp in pca_components:
     # Load the pretrained gt pca
     pca_path = "backbone/pca/pca_3dshapes_model_all_{0}comp.pkl".format(num_comp)
@@ -88,14 +93,10 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
     sess = tf.Session()
     with sess.as_default():
       # Choose a subset of interventions
-      subset_interventions = np.random.choice(
-          np.arange(num_recall_samples), size=num_interventions_per_latent_dim, 
-          replace=False)
-      result_d['subset_interventions'] = list(subset_interventions)
             
       print('\n\n\n Computing the total recall...')
       # Sample ground truth data and vae process it
-      decoded_gt_samples = decoder_fn(repr_transform_fn(*encoder_fn(gt_repr)))
+      decoded_gt_samples = decoder_fn(gt_repr)
       decoded_gt_samples = decoded_gt_samples.reshape(num_recall_samples, -1)
       reduced_decoded_gt_samples = gt_pca.transform(decoded_gt_samples)
   
