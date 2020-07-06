@@ -155,7 +155,7 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
                                     prior_generated_trained_prior_generated_result])
   
       # Pick a latent dimension
-      for dim in range(latent_dim):
+      for dim in range(2):
         print('\n\n\n Computing the recall for latent dim ', dim)
         
         agg_fix_one_vs_prior_generated_result = {'precision': [], 'recall': []}
