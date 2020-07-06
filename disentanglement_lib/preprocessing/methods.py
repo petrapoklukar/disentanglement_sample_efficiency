@@ -86,7 +86,6 @@ def create_split_train_and_validation(dataset_name,
     """
     del model_name
     
-    dataset_name += '_' + str(random_seed)
     random_state = np.random.RandomState(random_seed)
     SHAPES3D_PATH = os.path.join(
             os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
@@ -115,6 +114,7 @@ def create_split_train_and_validation(dataset_name,
     train_local_indices = all_local_indices[:splitratio]
     test_local_indices = all_local_indices[splitratio:]
     
+    dataset_name += '_' + str(random_seed)
     print('Writing files')
     for indices, split in list(zip([train_local_indices, test_local_indices], 
                                       ['_train', '_valid'])):
@@ -122,6 +122,7 @@ def create_split_train_and_validation(dataset_name,
         SPLIT_SHAPES3D_PATH = os.path.join(
             os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
             dataset_name + split + ".h5")
+        print(SPLIT_SHAPES3D_PATH)
         assert(ims[indices].shape[0] == indices.shape[0])
         assert(labs[indices].shape[0] == indices.shape[0])
         assert(inds[indices].shape[0] == indices.shape[0])
