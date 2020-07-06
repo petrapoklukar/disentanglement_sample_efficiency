@@ -86,6 +86,7 @@ def create_split_train_and_validation(dataset_name,
     """
     del model_name
     
+    dataset_name += '_' + str(random_seed)
     random_state = np.random.RandomState(random_seed)
     SHAPES3D_PATH = os.path.join(
             os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
