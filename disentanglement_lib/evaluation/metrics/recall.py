@@ -572,6 +572,7 @@ def update_result_dict_with_agg(result_d, *args):
   for arg in args:
     update_key = arg[0]
     update_recall = arg[1]['recall']
+    print('\n\n\n\n\n', arg)
 #    update_d = {update_key + 'recall_mean': list(np.mean(value, axis=0)) for key, value in arg[1].items()}
     update_d = {update_key + 'recall_mean': list(np.mean(update_recall, axis=0)),
                 update_key + 'recall_std': list(np.std(update_recall, axis=0)),
