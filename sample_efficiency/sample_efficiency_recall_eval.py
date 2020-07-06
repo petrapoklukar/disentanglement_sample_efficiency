@@ -83,7 +83,7 @@ def main_per_holdout(unused_argv):
       "evaluate_with_decodings.evaluation_fn = @recall_on_holdout",
       "evaluate_with_decodings.postprocess_fn = @mean_representation",
       "evaluate_with_decodings.random_seed = 0",
-      "dataset.name = 3dshapes_pca_holdout_s5000",
+      "dataset.name = '3dshapes_pca_holdout_s5000'",
       "recall_on_holdout.nhood_sizes = [3]",
       "recall_on_holdout.num_interventions_per_latent_dim = 1",
       "recall_on_holdout.pca_components = [100, 500]"
