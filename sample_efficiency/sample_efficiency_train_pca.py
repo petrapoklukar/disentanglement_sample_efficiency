@@ -81,7 +81,7 @@ def create_pca_holdout_split(unused_argv):
   preproces_gin_bindings = [
             "dataset.name = '%s'" %(FLAGS.dataset),
             "preprocess.preprocess_fn = @pca_split_holdout",
-            "pca_split_holdout.random_seed = %d" %(FLAGS.rng),
+            "pca_split_holdout.random_seed = 0",
             "pca_split_holdout.split_size = 5000"
       ]
   preprocess.preprocess_with_gin(FLAGS.dataset,
@@ -92,5 +92,5 @@ def create_pca_holdout_split(unused_argv):
   print("\n\n*- Preprocessing DONE \n\n")
 
 if __name__ == "__main__":
-  app.run(create_pca_holdout_split)
-#  app.run(main_per_dataset)
+#  app.run(create_pca_holdout_split)
+  app.run(main_per_dataset)
