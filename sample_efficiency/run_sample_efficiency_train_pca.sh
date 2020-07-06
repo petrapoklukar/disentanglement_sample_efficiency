@@ -19,7 +19,7 @@ echo $RUNS_PATH
 #SBATCH --constrain="belegost|rivendell|shire"
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=50GB
+#SBATCH --mem=150GB
 
 echo "Sourcing conda.sh"
 source "${HOME}/anaconda3/etc/profile.d/conda.sh"
