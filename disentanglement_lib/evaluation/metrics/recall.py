@@ -73,8 +73,7 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
               'gt_repr_mean': list(gt_repr_mean), 
               'gt_repr_std': list(gt_repr_std), 
               'gt_repr_min': list(gt_repr_min), 
-              'gt_repr_max': list(gt_repr_max), 
-              'pca_components': pca_components
+              'gt_repr_max': list(gt_repr_max)
               }
   
   subset_interventions = np.random.choice(
@@ -90,6 +89,7 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
       gt_pca = pickle.load(f)
   
     result_d = result_d_gen.copy()
+    result_d['pca_components'] = num_comp
     sess = tf.Session()
     with sess.as_default():
       # Choose a subset of interventions
@@ -155,7 +155,7 @@ def compute_recall_on_holdout(holdout_ground_truth_data,
                                     prior_generated_trained_prior_generated_result])
   
       # Pick a latent dimension
-      for dim in range(2):
+      for dim in range(latent_dim):
         print('\n\n\n Computing the recall for latent dim ', dim)
         
         agg_fix_one_vs_prior_generated_result = {'precision': [], 'recall': []}

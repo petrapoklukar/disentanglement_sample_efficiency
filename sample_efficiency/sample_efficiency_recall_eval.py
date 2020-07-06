@@ -86,10 +86,10 @@ def main_per_holdout(unused_argv):
       "evaluate_with_decodings.pca_components = [100, 500]",
       "dataset.name = '3dshapes_pca_holdout_s5000'",
       "recall_on_holdout.nhood_sizes = [3]",
-      "recall_on_holdout.num_interventions_per_latent_dim = 2",
+      "recall_on_holdout.num_interventions_per_latent_dim = 20",
       "recall_on_holdout.pca_components = [100, 500]"
   ]
-  result_path = os.path.join(vae_path, "metrics", "TEST_recall_TBD")
+  result_path = os.path.join(vae_path, "metrics", "recall_20interventions_pca100and500")
   evaluate_with_decodings.evaluate_with_gin(
       model_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
