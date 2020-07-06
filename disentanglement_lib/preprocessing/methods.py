@@ -179,7 +179,7 @@ def create_pca_split_holdout(dataset_name,
 
     SPLIT_SHAPES3D_PATH = os.path.join(
         os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
-        dataset_name + + ".h5")
+        dataset_name + ".h5")
     print(SPLIT_SHAPES3D_PATH)
     print(holdout_local_indices.shape)
     assert(ims[holdout_local_indices].shape[0] == holdout_local_indices.shape[0])
