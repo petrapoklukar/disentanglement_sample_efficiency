@@ -15,10 +15,9 @@ from absl import flags
 import sys
 sys.path.append('..')
 from disentanglement_lib.preprocessing import preprocess
-from disentanglement_lib.unsupervised import pca
+from disentanglement_lib.methods.unsupervised import pca
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string("model", None, "vae model to use")
 flags.DEFINE_string("dataset", None, "dataset to use")
 flags.DEFINE_boolean("overwrite", False,
                      "Whether to overwrite output directory.")
