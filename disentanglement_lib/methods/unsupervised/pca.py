@@ -69,7 +69,7 @@ def train_pca(model_dir,
   pca_dir = os.path.join(model_dir, "pca")
   for num_comp in num_pca_components:
     pca = PCA(n_components=num_comp, random_state=random_state)
-    original_train_images = dataset_train.images.reshape(dataset_train.size, -1)
+    original_train_images = dataset_train.images.reshape(dataset_train.data_size, -1)
     print(original_train_images.shape)
     trained_pca = pca.fit(original_train_images)
 
