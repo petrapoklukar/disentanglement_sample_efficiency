@@ -135,3 +135,60 @@ def create_split_train_and_validation(dataset_name,
     dataset_split.close()
     
 
+@gin.configurable("pca_split_holdout", 
+                  blacklist=["dataset_name", "model_name"])
+def create_pca_split_holdout(dataset_name, 
+                             model_name,
+                             random_seed=gin.REQUIRED, 
+                             split_size=gin.REQUIRED,
+                             unit_labels=False):
+    """ Randomly splits the dataset split into train and validation
+        splits.
+    
+    Args:   
+        filename: name of the file to split further
+    """
+    del model_name
+    
+    random_state = np.random.RandomState(random_seed)
+    SHAPES3D_PATH = os.path.join(
+            os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
+            dataset_name + ".h5")
+    dataset_split = h5py.File(SHAPES3D_PATH, 'r')
+    print(dataset_split.keys())
+    images_split = dataset_split['images'][()]
+    labels_split = dataset_split['labels'][()]
+    indices_split = dataset_split['indices'][()]
+    dataset_size = len(images_split)
+    
+    ims = np.array(images_split)
+    labs = np.array(labels_split)
+    inds = np.array(indices_split)
+    
+    if unit_labels:
+        labels_min = np.array([0., 0., 0., 0.75, 0., -30.])
+        labels_max = np.array([0.9, 0.9, 0.9, 1.25, 3., 30.])
+        labels_split = (labels_split - labels_min)/(labels_max - labels_min)
+        assert(np.min(labels_split) == 0 and np.max(labels_split) == 1)
+    
+    holdout_local_indices = random_state.choice(dataset_size, split_size, replace=False)
+    random_state.shuffle(holdout_local_indices)
+    
+    dataset_name = "3dshapes_pca_holdout_s{0}".format(split_size)
+    print('Writing files')
+
+    SPLIT_SHAPES3D_PATH = os.path.join(
+        os.environ.get("DISENTANGLEMENT_LIB_DATA", "."), "3dshapes", 
+        dataset_name + + ".h5")
+    print(SPLIT_SHAPES3D_PATH)
+    print(holdout_local_indices.shape)
+    assert(ims[holdout_local_indices].shape[0] == holdout_local_indices.shape[0])
+    assert(labs[holdout_local_indices].shape[0] == holdout_local_indices.shape[0])
+    assert(inds[holdout_local_indices].shape[0] == holdout_local_indices.shape[0])
+    hf = h5py.File(SPLIT_SHAPES3D_PATH, 'w')
+    hf.create_dataset('images', data=ims[holdout_local_indices])
+    hf.create_dataset('labels', data=labs[holdout_local_indices])
+    hf.create_dataset('indices', data=inds[holdout_local_indices])
+    hf.close()
+        
+    dataset_split.close()

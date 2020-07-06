@@ -69,13 +69,28 @@ def main_per_dataset(unused_argv):
   gin_bindings = [
       "dataset.name = '%s'" %(FLAGS.dataset),
       "train_pca.random_seed = 0",
-      "train_pca.num_pca_components = [100, 500, 1000, 2000, 4000]",
+      "train_pca.num_pca_components = [1000, 2000, 4000]", #[100, 500, 1000, 2000, 4000]",
   ]
   pca.train_pca_with_gin(
       model_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   print("\n\n*- Training COMPLETED \n\n")
 
 
+def create_pca_holdout_split(unused_argv):
+  print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
+  preproces_gin_bindings = [
+            "dataset.name = '%s'" %(FLAGS.dataset),
+            "preprocess.preprocess_fn = @pca_split_holdout",
+            "pca_split_holdout.random_seed = %d" %(FLAGS.rng),
+            "pca_split_holdout.split_size = 5000"
+      ]
+  preprocess.preprocess_with_gin(FLAGS.dataset,
+                                 "dummy_name",
+                                 overwrite=FLAGS.overwrite,
+                                 gin_config_files=None,
+                                 gin_bindings=preproces_gin_bindings)
+  print("\n\n*- Preprocessing DONE \n\n")
 
 if __name__ == "__main__":
-  app.run(main_per_dataset)
+  app.run(create_pca_holdout_split)
+#  app.run(main_per_dataset)
