@@ -69,7 +69,7 @@ def main_per_dataset(unused_argv):
   gin_bindings = [
       "dataset.name = '%s'" %(FLAGS.dataset),
       "train_pca.random_seed = 0",
-      "train_pca.num_pca_components = [10, 30]",#[100, 500, 1000, 2000, 4000]",
+      "train_pca.num_pca_components = [100, 500, 1000, 2000, 4000]",
   ]
   pca.train_pca_with_gin(
       model_path, FLAGS.overwrite, gin_bindings=gin_bindings)
