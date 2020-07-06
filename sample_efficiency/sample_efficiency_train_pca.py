@@ -47,7 +47,7 @@ def main(unused_argv):
   
   print("\n\n*- Training PCA.")
   gin_bindings = [
-      "dataset.name = '%s'" %(FLAGS.dataset),
+      "dataset.name = '%s'" %(FLAGS.dataset + '_' + str(FLAGS.rng)),
       "train_pca.random_seed = 0",
       "train_pca.num_pca_components = [10, 30]",#[100, 500, 1000, 2000, 4000]",
   ]
