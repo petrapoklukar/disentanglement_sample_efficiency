@@ -83,13 +83,13 @@ def main_per_holdout(unused_argv):
       "evaluate_with_decodings.evaluation_fn = @recall_on_holdout",
       "evaluate_with_decodings.postprocess_fn = @mean_representation",
       "evaluate_with_decodings.random_seed = 0",
-      "evaluate_with_decodings.pca_components = [100, 500]",
+      "evaluate_with_decodings.pca_components = [1000, 2000, 4000]",
       "dataset.name = '3dshapes_pca_holdout_s5000'",
       "recall_on_holdout.nhood_sizes = [3]",
       "recall_on_holdout.num_interventions_per_latent_dim = 20",
-      "recall_on_holdout.pca_components = [100, 500]"
+      "recall_on_holdout.pca_components = [1000, 2000, 4000]"
   ]
-  result_path = os.path.join(vae_path, "metrics", "recall_20interventions_pca100and500")
+  result_path = os.path.join(vae_path, "metrics", "recall_20interventions_pca1000and2000and4000")
   evaluate_with_decodings.evaluate_with_gin(
       model_path, result_path, FLAGS.overwrite, gin_bindings=gin_bindings)
   
