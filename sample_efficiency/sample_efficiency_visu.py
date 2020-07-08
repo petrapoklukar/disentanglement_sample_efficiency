@@ -31,23 +31,33 @@ from disentanglement_lib.visualize import visualize_model
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("model", None, "vae model to use")
+flags.DEFINE_string("dataset", None, "dataset to use")
 flags.DEFINE_boolean("overwrite", False,
                      "Whether to overwrite output directory.")
+flags.DEFINE_integer("rng", 0,
+                     "random seed")
 
 def main(unused_argv):
-
-  datasets = ["3dshapes_model_s1000"]#, "3dshapes_model_s10000", 
-              #"3dshapes_model_s50000", "3dshapes_model_s100000",
-              #"3dshapes_model_s150000", "3dshapes_model_s250000"]
   base_path = "3dshapes_models"
-  
-  
-  for dataset in datasets:
-    print(dataset)
-    path =base_path+"/" + FLAGS.model+dataset
-    path = base_path+"/bvae3dshapes_model_s1000_1602"
-    visualize_model.visualize(path+"/model", path+"/vis", FLAGS.overwrite)
 
+  print("\n\n*- Preprocessing '%s' \n\n" %(FLAGS.dataset))
+  preproces_gin_bindings = [
+        "dataset.name = '%s'" %(FLAGS.dataset),
+        "preprocess.preprocess_fn = @split_train_and_validation_per_model",
+        "split_train_and_validation_per_model.random_seed = %d" %(FLAGS.rng)
+  ]
+
+  preprocess.preprocess_with_gin(FLAGS.dataset,
+                                 FLAGS.model,
+                                 overwrite=FLAGS.overwrite,
+                                 gin_config_files=None,
+                                 gin_bindings=preproces_gin_bindings)
+  print("\n\n*- Preprocessing DONE \n\n")
+
+  vae_path = os.path.join(base_path, FLAGS.model + FLAGS.dataset + '_' + str(FLAGS.rng))
+  train_vae_path = os.path.join(vae_path, 'model')
+  visualize_model.visualize(train_vae_path, vae_path + "/vis", FLAGS.overwrite)
+  preprocess.destroy_train_and_validation_splits(FLAGS.dataset + '_' + FLAGS.model + '_' + str(FLAGS.rng))
 
 if __name__ == "__main__":
   app.run(main)

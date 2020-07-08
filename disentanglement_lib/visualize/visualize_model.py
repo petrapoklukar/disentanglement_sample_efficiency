@@ -338,7 +338,7 @@ def latent_traversal_1d_multi_dim(generator_fn,
 
   if values is None:
     # Default grid of values.
-    values = np.linspace(-1., 1., num=11)
+    values = np.linspace(-1., 1., num=31)
   elif isinstance(values, numbers.Integral):
     if values <= 1:
       raise ValueError("If an int is passed for values, it has to be >1.")
