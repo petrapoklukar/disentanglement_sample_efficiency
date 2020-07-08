@@ -32,7 +32,7 @@ do
 	echo ${model}
 	echo ${dataset}
 	echo ${seed}
-	rsync -a --ignore-existing -avz -e "ssh -p 2222" ppoklukar@moria.csc.kth.se:Workspace/disentanglement_sample_efficiency/sample_efficiency/3dshapes_models/${model}${dataset}_${seed}/metrics 3dshapes_models/${model}${dataset}_${seed}/
+	rsync -a --ignore-existing -avz -e "ssh -p 2222" ppoklukar@moria.csc.kth.se:Workspace/disentanglement_sample_efficiency/sample_efficiency/3dshapes_models/${model}${dataset}_${seed}/vis 3dshapes_models/${model}${dataset}_${seed}/
 done
 done
 done
